@@ -45,11 +45,10 @@ dbsnp129=$gatk_resources/dbsnp_146.hg38.excluding_sites_after_129.vcf.gz
 ./gatk --java-options "-Xms10g -Xmx10g" VariantEval \
    -R $refseq \
    --dbsnp $dbsnp129 \
-   --eval set1:AnVIL_CCDG_Broad_NP_Epilepsy_HKOSB_GRU_WES_Year4.vcf.gz \
+   --eval AnVIL_CCDG_Broad_NP_Epilepsy_HKOSB_GRU_WES_Year4.vcf.gz \
    -ped AnVIL_CCDG_Broad_NP_Epilepsy_HKOSB_GRU_WES_Year4.ped \
-   -noST -ST Sample -ST Novelty -ST Filter \
-   -noEV -EV CountVariants \
-   -noEV -EV TiTvVariantEvaluator \
-   -S LENIENT \
+   --no-st -ST Sample -ST Novelty -ST Filter \
+   --no-ev -EV CountVariants -EV TiTvVariantEvaluator \
+   --lenient \
    -O AnVIL_CCDG_Broad_NP_Epilepsy_HKOSB_GRU_WES_Year4.VariantEval.gatk-report
 ```
