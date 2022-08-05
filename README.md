@@ -149,7 +149,7 @@ done
 ```
 
 ## Merge the two sets of files together
-- Example of resulting file for TTN: (ClinVar-vs-kggseq.ACMG_IFv3.0_new_n14.AD.wPatho.TTN.protein-altering.flt.txt)[https://github.com/claratsm/GATK-human-resources/blob/76ccdab4bc882b63f564007e962d2e0e6902e2ea/ClinVar-vs-kggseq.ACMG_IFv3.0_new_n14.AD.wPatho.TTN.protein-altering.flt.txt]
+- Example of resulting file for TTN: [ClinVar-vs-kggseq.ACMG_IFv3.0_new_n14.AD.wPatho.TTN.protein-altering.flt.txt](https://github.com/claratsm/GATK-human-resources/blob/76ccdab4bc882b63f564007e962d2e0e6902e2ea/ClinVar-vs-kggseq.ACMG_IFv3.0_new_n14.AD.wPatho.TTN.protein-altering.flt.txt)
 ```bash
 cat ACMG_IFv3.0_new_n14.AD.genes | while read GENE; do
   awk 'NR==FNR { info[$1":"$2":"$3]=$0 } NR!=FNR && $4 in info { print $0"\t"info[$4] }' \
