@@ -4,6 +4,7 @@
 ### _Software needed_
 - GATK v4
 - bcftools
+- PLINK2 (https://www.cog-genomics.org/plink/2.0/)
 
 ### _Data_
 - AnVIL_CCDG_Broad_NP_Epilepsy_HKOSB_GRU_WES_Year4.vcf.gz.*
@@ -51,4 +52,31 @@ dbsnp129=$gatk_resources/dbsnp_146.hg38.excluding_sites_after_129.vcf.gz
    --no-ev -EV CountVariants -EV TiTvVariantEvaluator \
    --lenient \
    -O AnVIL_CCDG_Broad_NP_Epilepsy_HKOSB_GRU_WES_Year4.VariantEval.gatk-report
+```
+
+## Individual-based and variant-based quality control using PLINK
+```bash
+# PLINK2
+plink2 --vcf /lustre1/u/u3579068/project/AnVIL_CCDG_Broad_NP_Epilepsy_HKOSB_GRU_WES_Year4_AnVIL_CCDG_Broad_NP_Epilepsy_HKOSB_GRU_WES_Year4.vcf.gz \
+  --double-id \
+  --vcf-min-gq 20 \
+  --vcf-min-dp 8 \
+  --out AnVIL_CCDG_Broad_NP_Epilepsy_HKOSB_GRU_WES_Year4.QCpos
+
+plink2 --pfile AnVIL_CCDG_Broad_NP_Epilepsy_HKOSB_GRU_WES_Year4.QCpos \
+  --maf 0.05 \
+  --geno 0.05 \
+  --max-alleles 2 \
+  --make-bed \
+  --out AnVIL_CCDG_Broad_NP_Epilepsy_HKOSB_GRU_WES_Year4.QCedpos.biallelic.maf05
+
+# PLINK 1.9
+plink --bfile AnVIL_CCDG_Broad_NP_Epilepsy_HKOSB_GRU_WES_Year4.QCedpos.biallelic.maf05 \
+  --indep-pairwise 200 50 0.2 \
+  --out AnVIL_CCDG_Broad_NP_Epilepsy_HKOSB_GRU_WES_Year4.QCedpos.biallelic.maf05.pruned 
+
+plink --bfile AnVIL_CCDG_Broad_NP_Epilepsy_HKOSB_GRU_WES_Year4.QCedpos.biallelic.maf05 \
+  --extract AnVIL_CCDG_Broad_NP_Epilepsy_HKOSB_GRU_WES_Year4.QCedpos.biallelic.maf05.pruned.prune.in \
+  --genome \
+  --out AnVIL_CCDG_Broad_NP_Epilepsy_HKOSB_GRU_WES_Year4.QCedpos.biallelic.maf05.pruned 
 ```
