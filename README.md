@@ -138,7 +138,7 @@ cat ACMG_IFv3.0_new_n14.AD.genes | while read GENE; do
 done
 ```
 
-# Record the overlapping variants
+## Record the overlapping variants
 ```
 # module load BEDTools (search the exact name by module avail)
 cat ACMG_IFv3.0_new_n14.AD.genes | while read GENE; do 
@@ -148,7 +148,7 @@ cat ACMG_IFv3.0_new_n14.AD.genes | while read GENE; do
 done
 ```
 
-# Merge the two sets of files together
+## Merge the two sets of files together
 ```bash
 cat ACMG_IFv3.0_new_n14.AD.genes | while read GENE; do
   awk 'NR==FNR { info[$1":"$2":"$3]=$0 } NR!=FNR && $4 in info { print $0"\t"info[$4] }' \
