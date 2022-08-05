@@ -80,3 +80,20 @@ plink --bfile AnVIL_CCDG_Broad_NP_Epilepsy_HKOSB_GRU_WES_Year4.QCedpos.biallelic
   --genome \
   --out AnVIL_CCDG_Broad_NP_Epilepsy_HKOSB_GRU_WES_Year4.QCedpos.biallelic.maf05.pruned 
 ```
+# KGGseq annotation
+- Allele frequency
+- In silico damaging scores
+```bash
+java -Xmx37g -jar kggseq.jar \
+        --resource resources/ \
+        --no-lib-check --buildver hg19 \
+        --vcf-file /lustre1/u/u3579068/project/AnVIL_CCDG_Broad_NP_Epilepsy_HKOSB_GRU_WES_Year4_AnVIL_CCDG_Broad_NP_Epilepsy_HKOSB_GRU_WES_Year4.vcf.gz \
+        --seq-qual 30 --seq-mq 20 --gty-qual 20 --gty-dp 8 \
+        --db-gene refgene --gene-feature-in 0,1,2,3,4,5,6,7,8,9,10 \
+        --db-filter 1kg201204,1kgafr201204,1kgeur201204,1kgasn201204,1kgeur201305,1kgeas201305,1kgafr201305,ESP6500AA,ESP6500EA,exac,ehr,gadexome,gadgenome \
+        --rare-allele-freq 1.1 \
+        --db-score dbnsfp \
+        --mendel-causing-predict best \
+        --out AnVIL_CCDG_Broad_NP_Epilepsy_HKOSB_GRU_WES_Year4.impact \
+        --nt 10       # number of nodes
+```
