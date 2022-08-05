@@ -139,7 +139,7 @@ done
 ```
 
 ## Record the overlapping variants
-```
+```bash
 # module load BEDTools (search the exact name by module avail)
 cat ACMG_IFv3.0_new_n14.AD.genes | while read GENE; do 
     bedtools window -a bed/kggseqannot.$GENE.protein-altering.bed -b ClinVar/clinvar_20211030.ACMG_IFv3.0_new_n14.AD.$GENE.bed -w 1 \
@@ -149,6 +149,7 @@ done
 ```
 
 ## Merge the two sets of files together
+- Example of resulting file for TTN: (ClinVar-vs-kggseq.ACMG_IFv3.0_new_n14.AD.wPatho.TTN.protein-altering.flt.txt)[]
 ```bash
 cat ACMG_IFv3.0_new_n14.AD.genes | while read GENE; do
   awk 'NR==FNR { info[$1":"$2":"$3]=$0 } NR!=FNR && $4 in info { print $0"\t"info[$4] }' \
