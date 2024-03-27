@@ -8,3 +8,9 @@ In R programming language, there are a few commonly used data types predefined i
 5. Complex
 
 You can use the class() and typeof() functions to check the class and data type of any variable. 
+
+```{R}
+# Example
+x <- "Surgery"
+typeof(x)
+```
