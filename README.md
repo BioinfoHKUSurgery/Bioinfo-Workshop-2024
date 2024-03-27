@@ -6,7 +6,7 @@
 ...
   
 ## Workshop contents and materials
-1. Inroduction to R (1) ([Online tutorials])
+1. Inroduction to R (1) ([Online tutorials](1-Introduction-to-R.md))
 2. Inroduction to R (2) ([Online tutorials])
 ... 
 4. Fundamentals of scRNASeq analysis (Online tutorials)
