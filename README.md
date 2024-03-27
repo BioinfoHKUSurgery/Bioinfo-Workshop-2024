@@ -11,6 +11,6 @@
 3. ... 
 4. Fundamentals of scRNASeq analysis (Online tutorials)
 
-### Software needed
+## Software needed
 - R, RStudio, Rmarkdown
 
