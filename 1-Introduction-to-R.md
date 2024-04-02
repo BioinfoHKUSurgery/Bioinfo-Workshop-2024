@@ -46,11 +46,11 @@ The `numeric` is for numeric values, as the most common and the default data typ
 ```r
 x <- c(1, 2, 4, 16)
 x
-# >[1]  1  2  4 16
+#> [1]  1  2  4 16
 class(x)
-# > [1] "numeric"
+#> [1] "numeric"
 typeof(x)
-# > [1] "double"
+#> [1] "double"
 ```
 
 #### 2.1.2 Integer
@@ -106,16 +106,161 @@ typeof(w)
 ```r
 gender <- factor(c("female", "male", "male", "female", "male"))
 gender
-## [1] female male male   female male  
-## Levels: female male
+#> [1] female male male   female male  
+#> Levels: female male
 ```
 To know the different levels of a factor variable, use `levels()`:
 ```r
 levels(gender)
-## [1] "female" "male"
+#> [1] "female" "male"
 ```
 
 ### 2.2 Data Structures
+Data structure involves how the data is organised, accessed and modified. Using an appropriate data structure may largely improve computing efficiency.
+
+#### 2.2.1 Vector
+`Vector` is a basic data structure in R. It contains elements in the same data type (no matter double, integer, character, etc). You can check data type by using typeof() function and length of the vector by length() function.
+```r
+x
+length(x)
+#> [1] 4
+```
+```r
+x <- rep(3, 5)    # repeat 3 for 5 times
+x <- 1:12         # integer from 1 to 12
+```
+
+#### 2.2.2 Matrix
+`Matrix` is a two-dimensional data structure. It is in principle built based on vector but has more convenient built-in functions for computation. It has rows and columns, both of which can also have names. To check the dimensions, you can use the `dim()` function.
+
+```r
+A <- matrix(1:12, nrow=3)
+A
+#>      [,1] [,2] [,3] [,4]
+#> [1,]    1    4    7   10
+#> [2,]    2    5    8   11
+#> [3,]    3    6    9   12
+
+dim(A)
+#> [1] 3 4
+
+B <- matrix(1:12, nrow=3, byrow=TRUE)
+B
+#>      [,1] [,2] [,3] [,4]
+#> [1,]    1    2    3    4
+#> [2,]    5    6    7    8
+#> [3,]    9   10   11   12
+
+colnames(A) <- c("C1","C2","C3","C4")
+rownames(A) <- c("R1","R2","R3")
+A
+#>    C1 C2 C3 C4
+#> R1  1  4  7 10
+#> R2  2  5  8 11
+#> R3  3  6  9 12
+```
+
+To index vector, you can use `logical` or `integer` (starting from 1), or the element name if it has. We can also use negative integers to return all elements except those specified. But we cannot mix positive and negative integers while indexing and real numbers if used are truncated to integers.
+
+```r
+x <- 1:12
+
+x[3]
+#> [1] 3
+
+x[2:5]
+#> [1] 2 3 4 5
+
+x[c(2, 5, 6)]                   # index with integer
+#> [1] 2 5 6
+
+x[c(TRUE, FALSE, FALSE, TRUE)]  # index with logical value
+#> [1]  1  4  5  8  9 12
+```
+```r
+A
+#>    C1 C2 C3 C4
+#> R1  1  4  7 10
+#> R2  2  5  8 11
+#> R3  3  6  9 12
+
+A[1, 2]
+#> [1] 4
+
+A[1, "C2"]
+#> [1] 4
+
+A[1, c(2, 3)]
+#> C2 C3 
+#>  4  7
+
+A[1:2, c(2, 3)]
+#>    C2 C3
+#> R1  4  7
+#> R2  5  8
+
+A[-1, -1]
+```
+You can also modify values of an element of the vector/matrix by index.
+```
+1.2.2.2 Modify values
+A[1, 2:4] <- c(-3, -5, 20)
+A
+#>    C1 C2 C3 C4
+#> R1  1 -3 -5 20
+#> R2  2  5  8 11
+#> R3  3  6  9 12
+```
+
+#### 2.2.3 List
+Different from `vector` that has all elements in the same data type, the list data structure can have components of mixed data types. We can use `str()` function to view the structure of a list (or any object).
+```r
+x <- list(2.5, TRUE, 1:3)
+x
+#> [[1]]
+#> [1] 2.5
+#> 
+#> [[2]]
+#> [1] TRUE
+#> 
+#> [[3]]
+#> [1] 1 2 3
+
+str(x)
+#> List of 3
+#>  $ : num 2.5
+#>  $ : logi TRUE
+#>  $ : int [1:3] 1 2 3
+We can also have a name for each element:
+
+x <- list("a" = 2.5, "b" = TRUE, "c" = 1:3)
+```
+Different from `vector` and `matrix`, for a `list`, you need to use double-layer square brackets, either by numeric index or name. Alternatively, you can also use `$` symbol with the name.
+```r
+x[[3]]
+#> [1] 1 2 3
+
+x[["c"]]
+#> [1] 1 2 3
+
+x$c
+#> [1] 1 2 3
+```
+
+#### 2.2.4 Data Frame
+`Data frame` is widely used for rectangular data, where each column has the same data type (`vector`) but different columns can have different data types (like Excel). It can be treated as a special type of list: A list of vectors with the **same length**.
+
+```r
+df <- data.frame("SampleID" = 1:5, "Age" = 15:19, 
+                 "Name" = c("John","Peter","Paul","Mary","Harry"))
+df
+#   SampleID Age  Name
+# 1        1  15  John
+# 2        2  16 Peter
+# 3        3  17  Paul
+# 4        4  18  Mary
+# 5        5  19 Harry
+```
 
 ## 3. Data management
 ### 3.1 Data input : read in .csv table
