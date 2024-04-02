@@ -307,25 +307,60 @@ write.table(pheno, "TG_CAD.txt", row.names=F, col.names=T, quote=F, sep="\t")
 ```
 
 ## 4. Statistical analysis
+Next, we would like to test if LDL and/or TG levels are associated with CAD in our phenotype dataset. 
+
+### 4.1 *t* test
+We can use  t test to assess whether two independent samples (with and without CAD) taken from normal distributions have significantly different means.
+
+To test for normality, you can plot a histogram (or quantile-quantile (QQ) plot) to visualize the distribution.
 ```r
 hist(pheno$LDL)
 
-par(mfrow=c(2,1))
+par(mfrow=c(2,1)) # plot in two rows
 hist(pheno$LDL[pheno$CAD==0])
 hist(pheno$LDL[pheno$CAD==1])
 
 by(pheno$LDL,pheno$CAD,summary)
-
+```
+You can use Shapiro-Wilk's method to formally test for normality in R. If p-value > 0.05, then the distribution of the data is not significantly different from normal distribution, i.e. assume to be normal. 
+```
+shapiro.test(pheno$LDL)
+```
+To perform *t* test, you can directly use the built-in `t.test()` function.
+```r
 t.test(pheno$LDL[pheno$CAD==0], pheno$LDL[pheno$CAD==1])
 # t.test(pheno$LDL ~ pheno$CAD)
 ```
+
+### 4.3 correlation 
+We can also test for correlation between quantitative phenotypes using `cor.test`. To test if TG and LDL levels are correlated, 
 ```r
-# correlation
-# - scatter plot
-# linear regression
+# scatter plot
+plot(pheno$LDL, pheno$TG)
+
+# correlation test
+cor.test(pheno$LDL, pheno$TG,  method = "pearson", use = "complete.obs")
+```
+
+### 4.4 regression
+We can also perform linear and logistic regression using Generalised linear model (GLM) to test if the regression coefficient is zero or not.
+
+```r
 # logistic regression
+summary(glm(pheno$CAD ~ pheno$LDL, family="binomial"))
+
+# linear regression
+summary(glm(pheno$LDL ~ pheno$CAD))
+
+# stepwise regression
 step(glm(CAD~., data=pheno[,3:ncol(pheno)], family="binomial"))
 ```
+
+## 5. Exercise
+1) Read in `Mutations.txt` into an object called `mutation`
+
+2) Merge the two objects by common ID, i.e. IID
+3) Test if any of these mutations can help predict CAD
 ```r
 merge()
 boxplot()
