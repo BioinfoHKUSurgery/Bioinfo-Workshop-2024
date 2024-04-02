@@ -37,6 +37,7 @@ In R, a variable is referred to an `object`. There are a few commonly used data 
 2. Integers
 3. Logical
 4. Characters
+5. Factors
 
 You can use the class() and typeof() functions to check the class and data type of any variable.
 
@@ -97,6 +98,21 @@ w
 #> [1] "su", "rg", "er", "y"
 typeof(w)
 #> [1] "character"
+```
+
+#### 2.1.5 Factor ***
+`Factor` is a special case of `character` data type, which is often used to represent categorical data. Categories of each factor data type are known as `LEVELS`. E.g. for gender,
+
+```
+gender <- factor(c("female", "male", "male", "female", "male"))
+gender
+## [1] female male male   female male  
+## Levels: female male
+```
+To know the different levels of a factor variable, use `levels()`:
+```
+levels(gender)
+## [1] "female" "male"
 ```
 
 ### 2.2 Data Structures
