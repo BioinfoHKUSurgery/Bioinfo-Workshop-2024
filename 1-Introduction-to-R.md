@@ -43,19 +43,19 @@ You can use the class() and typeof() functions to check the class and data type 
 
 #### 2.1.1 Numeric (or double)
 The `numeric` is for numeric values, as the most common and the default data type. 
-```
+```r
 x <- c(1, 2, 4, 16)
 x
-#>[1]  1  2  4 16
+# >[1]  1  2  4 16
 class(x)
-#> [1] "numeric"
+# > [1] "numeric"
 typeof(x)
-#> [1] "double"
+# > [1] "double"
 ```
 
 #### 2.1.2 Integer
 The `integer` is another data type used for the set of all integers. You can use the capital ‘L’ notation as a suffix to specify a particular value as the integer data type. Also, you can convert a value into an integer type using the as.integer() function.
-```
+```r
 y <- c(1L, 2L, 4L, 16L)
 y
 #> [1] 1 2 4 16
@@ -64,7 +64,7 @@ class(y)
 typeof(y)
 #> [1] "integer"
 ```
-```
+```r
 # Assign a integer value to y
 y <- 20
 y_in <- as.integer(20)
@@ -81,7 +81,7 @@ print(is.integer(y_in))
 #### 2.1.3 Logical
 The `logical` data type takes either a value of `true` or `false`. A logical value is often generated when comparing variables.
 
-```
+```r
 2>1
 z <- c(TRUE, TRUE, FALSE, FALSE)
 z
@@ -92,7 +92,7 @@ typeof(z)
 
 #### 2.1.4 Character
 The `character` is a data type where you have all the alphabets and special characters. It stores character values or strings. Strings in R can contain alphabets, numbers, and symbols. The character type is usually denoted by wrapping the value inside single or double inverted commas.
-```
+```r
 w <- c("su", "rg", "er", "y")
 w
 #> [1] "su", "rg", "er", "y"
@@ -103,14 +103,14 @@ typeof(w)
 #### 2.1.5 Factor ***
 `Factor` is a special case of `character` data type, which is often used to represent categorical data. Categories of each factor data type are known as `LEVELS`. E.g. for gender,
 
-```
+```r
 gender <- factor(c("female", "male", "male", "female", "male"))
 gender
 ## [1] female male male   female male  
 ## Levels: female male
 ```
 To know the different levels of a factor variable, use `levels()`:
-```
+```r
 levels(gender)
 ## [1] "female" "male"
 ```
