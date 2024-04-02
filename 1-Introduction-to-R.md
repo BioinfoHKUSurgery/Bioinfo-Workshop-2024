@@ -11,7 +11,15 @@ For this and the coming tutorials, you will need to install
 - R: [https://cloud.r-project.org/](https://cloud.r-project.org)
 - RStudio: [https://posit.co/download/rstudio-desktop/](https://posit.co/download/rstudio-desktop/)
 
-## 1.1 Data types
+After installation, launch RStudio (and, therefore R at the same time). You will see 4 default primary panes in the user interface:
+- **Source** : where you document your source codes
+- **Console** : where you run the codes interactively
+- **Environments** : containing the `Environment`, `History`, `Connections`, `Tutorial` tabs, etc
+- **Output** : containing the `Files`, `Plots`, `Packages`, `Help`, `Viewer`, and `Presentation` tabs
+
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/5e51192a-ef2a-44b4-9653-19ebfa423f23)
+
+## 2. Data types
 In R programming language, there are a few commonly used data types predefined in the built-in environment. In total, R has five basic data types:
 
 1. Numeric
