@@ -7,11 +7,11 @@
   
 ## Workshop contents and materials
 1. Inroduction to R (1) ([Online tutorials](1-Introduction-to-R.md))
-2. Inroduction to R (2) ([Online tutorials](https://github.com/WCSCourses/HumanGenEpi/blob/9128b0603437fc5be93796236caea6eba8d58412/manuals/Sample_array_QC/Sample_array_QC.md))
-3. Demo on case study ([Online tutorials](https://statbiomed.github.io/BMDS-book/cancer.html#cancer-case1)) 
-4. Fundamentals of scRNASeq analysis (Online tutorials)
-5. ...
+2. Inroduction to R (2)
+3. Basic omics data analysis
+4. Public bioinformatics resources for genomic analysis interpretation 
+5. Machine learning
+6. Bridging the research findings to clinical application
 
 ## Software needed
-- R, RStudio, Rmarkdown
-
+- R, RStudio
