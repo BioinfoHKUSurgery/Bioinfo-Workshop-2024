@@ -7,7 +7,11 @@ In the era of data science, there are several pros and cons of using R programmi
 
 
 ## 1. Installation
-For this and the coming tutorials, you will need to install
+For this and the coming tutorials, you will need to download the data in tab-delimited text file format
+- [Pheno.txt](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/blob/be74dc2428d340c467562eab9ce580caea905a5d/Data/1-Introduction-to-R/Pheno.txt) 
+- [Mutations.txt](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/blob/be74dc2428d340c467562eab9ce580caea905a5d/Data/1-Introduction-to-R/Mutations.txt)
+
+and install `R` and `RStudio`
 - R: [https://cloud.r-project.org/](https://cloud.r-project.org)
 - RStudio: [https://posit.co/download/rstudio-desktop/](https://posit.co/download/rstudio-desktop/)
 
