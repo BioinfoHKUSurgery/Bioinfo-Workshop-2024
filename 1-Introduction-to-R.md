@@ -267,7 +267,67 @@ df
 ```
 
 ## 3. Data management
-### 3.1 Data input : read in .csv table
+### 3.1 Data input : read in .txt table
+First, we read in the phenotype file and specify (i) the presense of header using `h=T` and (ii) the format of tab-delimited using `sep="\t"`
+```r
+pheno <- read.table("Pheno.txt", h=T, sep="\t")
+```
+```r
+# What is the class of the object?
+class(pheno)
+
+# How many columns and rows are there?
+dim(pheno)
+nrow(pheno)
+ncol(pheno)
+
+# Show the summary information of the data frame
+summary(pheno)
+```
+Phenotypes include
+1) **FID** : Family ID [Character]
+2) **IID** : Individual ID [Character]
+3) **CAD** : disease status of coronary artery disease (CAD) [Integer: case=2; control=1]
+4) **LDL** : low-density lipoprotein (LDL) level  [Double]
+5) **TG**  : triglyceride (TG) level [Double]
+6) **AGE** : age of measurement/recruitment [Integer]
+
+### 3.2 Data output : write to .txt table
+Let's try to transform the CAD status from 2-1 to 1-0 and rewrite to a new tab-delimited text file
+```r
+pheno$CAD <- pheno$CAD - 1
+write.table(pheno, "Pheno10.txt", row.names=F, col.names=T, quote=F, sep="\t")
+```
+
+Write a new phenotype file with TG level of only CAD patients
+```r
+TG_CAD <- pheno[pheno$CAD==1,c("IID","TG"])
+# TG_CAD <- subset(pheno,CAD==1, select=c(IID,TG))
+write.table(pheno, "TG_CAD.txt", row.names=F, col.names=T, quote=F, sep="\t")
+```
 
 ## 4. Statistical analysis
+```r
+hist(pheno$LDL)
+
+par(mfrow=c(2,1))
+hist(pheno$LDL[pheno$CAD==0])
+hist(pheno$LDL[pheno$CAD==1])
+
+by(pheno$LDL,pheno$CAD,summary)
+
+t.test(pheno$LDL[pheno$CAD==0], pheno$LDL[pheno$CAD==1])
+# t.test(pheno$LDL ~ pheno$CAD)
+```
+```r
+# correlation
+# - scatter plot
+# linear regression
+# logistic regression
+step(glm(CAD~., data=pheno[,3:ncol(pheno)], family="binomial"))
+```
+```r
+merge()
+boxplot()
+```
 
