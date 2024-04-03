@@ -388,7 +388,7 @@ t.test(pheno$LDL[pheno$CAD==0], pheno$LDL[pheno$CAD==1])
 ```
 
 ### 4.3 Correlation 
-We can also test for correlation between quantitative phenotypes using `cor.test`. To test if TG and LDL levels are correlated, 
+We can also test for correlation between quantitative phenotypes using `cor.test`. To test if HDL and LDL levels are correlated, 
 ```r
 # scatter plot
 plot(pheno$LDL, pheno$HDL)
@@ -399,26 +399,53 @@ cor.test(pheno$LDL, pheno$HDL,  method = "pearson", use = "complete.obs")
 ```
 
 ### 4.4 Regression
-We can also perform linear and logistic regression using Generalised linear model (GLM) to test if the regression coefficient is zero or not.
+We can also perform linear and logistic regression using Generalised Linear Model (GLM) to test if the regression coefficient is zero or not.
 
 ```r
 # logistic regression
 summary(glm(pheno$CAD ~ pheno$LDL, family="binomial"))
-
+```
+```r
+# logistic regression with covariate
+summary(glm(CAD ~ LDL + AGE, data=pheno, family="binomial"))
+```
+```r
 # linear regression
 summary(glm(pheno$LDL ~ pheno$CAD))
-
+```
+```r
 # stepwise regression
-step(glm(CAD~., data=pheno[,3:ncol(pheno)], family="binomial"))
+step(glm(CAD ~ LDL + HDL + AGE, data=pheno, family="binomial"))
 ```
 
 ## 5. Exercise
 1) Read in `Mutations.txt` into an object called `mutation`
+<details>
+  <summary>  </summary>
+ 
+```r
+mutations <- read.table("Mutations.txt", h=T, sep="\t")
+```
+</details>
 
 2) Merge the two objects by common ID, i.e. IID
-3) Test if any of these mutations can help predict CAD
+
+<details>
+  <summary>  </summary>
+ 
 ```r
-merge()
-boxplot()
+pheno_mut <- merge(pheno, mutations, by="IID")
 ```
+</details>
+
+3) Test if any of these mutations can help predict CAD
+<details>
+  <summary>  </summary>
+ 
+```r
+step(glm(CAD ~ ., data=pheno_mut[,3:ncol(pheno_mut)], family="binomial"))
+```
+</details>
+
+
 
