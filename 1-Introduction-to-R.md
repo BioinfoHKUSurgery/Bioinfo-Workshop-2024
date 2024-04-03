@@ -43,7 +43,7 @@ In R, a variable is referred to an `object`. There are a few commonly used data 
 4. Characters
 5. Factors
 
-You can use the class() and typeof() functions to check the class and data type of any variable.
+You can use the `class()` and `typeof()` functions to check the class and data type of any variable.
 
 #### 2.1.1 Numeric (or double)
 The `numeric` is for numeric values, as the most common and the default data type. 
