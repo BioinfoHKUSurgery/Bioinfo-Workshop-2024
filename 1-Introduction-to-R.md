@@ -58,7 +58,7 @@ typeof(x)
 ```
 
 #### 2.1.2 Integer
-The `integer` is another data type used for the set of all integers. You can use the capital ‘L’ notation as a suffix to specify a particular value as the integer data type. Also, you can convert a value into an integer type using the as.integer() function.
+The `integer` is another data type used for the set of all integers. You can use the capital ‘L’ notation as a suffix to specify a particular value as the integer data type. Also, you can convert a value into an integer type using the `as.integer()` function.
 ```r
 y <- c(1L, 2L, 4L, 16L)
 y
@@ -69,7 +69,7 @@ typeof(y)
 #> [1] "integer"
 ```
 ```r
-# Assign a integer value to y
+# Assign an integer value to y
 y <- 20
 y_in <- as.integer(20)
  
@@ -87,6 +87,8 @@ The `logical` data type takes either a value of `true` or `false`. A logical val
 
 ```r
 2>1
+#> [1] TRUE
+
 z <- c(TRUE, TRUE, FALSE, FALSE)
 z
 #> [1]  TRUE  TRUE  FALSE FALSE
@@ -105,7 +107,7 @@ typeof(w)
 ```
 
 #### 2.1.5 Factor ***
-`Factor` is a special case of `character` data type, which is often used to represent categorical data. Categories of each factor data type are known as `LEVELS`. E.g. for gender,
+`Factor` is a special case of `character` data type, which is often used to represent categorical data. Categories of each factor data type are known as `Levels`. E.g. for gender,
 
 ```r
 gender <- factor(c("female", "male", "male", "female", "male"))
@@ -135,7 +137,7 @@ x <- 1:12         # integer from 1 to 12
 ```
 
 #### 2.2.2 Matrix
-`Matrix` is a two-dimensional data structure. It is in principle built based on vector but has more convenient built-in functions for computation. It has rows and columns, both of which can also have names. To check the dimensions, you can use the `dim()` function.
+`Matrix` is a two-dimensional data structure. It is in principle built based on vector but has more convenient built-in functions for computation. It has rows and columns, both of which can also have names. To check the dimensions, you can use the `dim()`, `nrow`, and `ncol` functions.
 
 ```r
 A <- matrix(1:12, nrow=3)
@@ -144,17 +146,20 @@ A
 #> [1,]    1    4    7   10
 #> [2,]    2    5    8   11
 #> [3,]    3    6    9   12
-
+```
+```r
 dim(A)
 #> [1] 3 4
-
+```
+```r
 B <- matrix(1:12, nrow=3, byrow=TRUE)
 B
 #>      [,1] [,2] [,3] [,4]
 #> [1,]    1    2    3    4
 #> [2,]    5    6    7    8
 #> [3,]    9   10   11   12
-
+```
+```r
 colnames(A) <- c("C1","C2","C3","C4")
 rownames(A) <- c("R1","R2","R3")
 A
@@ -171,13 +176,16 @@ x <- 1:12
 
 x[3]
 #> [1] 3
-
+```
+```r
 x[2:5]
 #> [1] 2 3 4 5
-
+```
+```r
 x[c(2, 5, 6)]                   # index with integer
 #> [1] 2 5 6
-
+```
+```r
 x[c(TRUE, FALSE, FALSE, TRUE)]  # index with logical value
 #> [1]  1  4  5  8  9 12
 ```
@@ -190,24 +198,38 @@ A
 
 A[1, 2]
 #> [1] 4
-
+```
+```r
 A[1, "C2"]
 #> [1] 4
-
+```
+```r
 A[1, c(2, 3)]
 #> C2 C3 
 #>  4  7
-
+```
+```r
 A[1:2, c(2, 3)]
 #>    C2 C3
 #> R1  4  7
 #> R2  5  8
+```
 
-A[-1, -1]
+**Q:** How to get last 2 columns of last 2 rows?
+<details>
+  <summary> **Answers:** </summary>
+  
+ ```r
+A[-1, -c(1,2)]
 ```
+ ```r
+A[2:3, 3:4]
+```
+</details>
+
+
 You can also modify values of an element of the vector/matrix by index.
-```
-1.2.2.2 Modify values
+```r
 A[1, 2:4] <- c(-3, -5, 20)
 A
 #>    C1 C2 C3 C4
@@ -229,14 +251,16 @@ x
 #> 
 #> [[3]]
 #> [1] 1 2 3
-
+```
+```r
 str(x)
 #> List of 3
 #>  $ : num 2.5
 #>  $ : logi TRUE
 #>  $ : int [1:3] 1 2 3
+```
 We can also have a name for each element:
-
+```r
 x <- list("a" = 2.5, "b" = TRUE, "c" = 1:3)
 ```
 Different from `vector` and `matrix`, for a `list`, you need to use double-layer square brackets, either by numeric index or name. Alternatively, you can also use `$` symbol with the name.
@@ -275,12 +299,19 @@ pheno <- read.table("Pheno.txt", h=T, sep="\t")
 ```r
 # What is the class of the object?
 class(pheno)
+```
+**Q:** How many columns and rows are there?
+<details>
+  <summary> **Answers:** </summary>
 
-# How many columns and rows are there?
+```r
 dim(pheno)
 nrow(pheno)
 ncol(pheno)
+```
+</details>
 
+```r
 # Show the summary information of the data frame
 summary(pheno)
 ```
@@ -289,7 +320,7 @@ Phenotypes include
 2) **IID** : Individual ID [Character]
 3) **CAD** : disease status of coronary artery disease (CAD) [Integer: case=2; control=1]
 4) **LDL** : low-density lipoprotein (LDL) level  [Double]
-5) **TG**  : triglyceride (TG) level [Double]
+5) **HDL** : high-density lipoprotein (HDL) level  [Double]
 6) **AGE** : age of measurement/recruitment [Integer]
 
 ### 3.2 Data output : write to .txt table
@@ -299,29 +330,53 @@ pheno$CAD <- pheno$CAD - 1
 write.table(pheno, "Pheno10.txt", row.names=F, col.names=T, quote=F, sep="\t")
 ```
 
-Write a new phenotype file with TG level of only CAD patients
+Write a new phenotype file with HDL level of only CAD patients
 ```r
-TG_CAD <- pheno[pheno$CAD==1,c("IID","TG"])
-# TG_CAD <- subset(pheno,CAD==1, select=c(IID,TG))
-write.table(pheno, "TG_CAD.txt", row.names=F, col.names=T, quote=F, sep="\t")
+HDL_CAD <- pheno[pheno$CAD==1,c("IID","HDL")]
+# HDL_CAD <- subset(pheno,CAD==1, select=c(IID,HDL))
+write.table(pheno, "HDL_CAD.txt", row.names=F, col.names=T, quote=F, sep="\t")
 ```
 
 ## 4. Statistical analysis
-Next, we would like to test if LDL and/or TG levels are associated with CAD in our phenotype dataset. 
+Next, we would like to test if LDL and/or HDL levels are associated with CAD in our phenotype dataset. 
 
 ### 4.1 *t* test
-We can use  t test to assess whether two independent samples (with and without CAD) taken from normal distributions have significantly different means.
+We can use *t* test to assess whether two independent samples (with and without CAD) taken from normal distributions have significantly different means.
 
 To test for normality, you can plot a histogram (or quantile-quantile (QQ) plot) to visualize the distribution.
 ```r
 hist(pheno$LDL)
+```
+<details>
+  <summary>  </summary>
 
+```r
+hist(pheno$LDL,col="cornsilk3",xlim=c(-5,5),xlab="LDL level", main="",border="white")
+```
+</details>
+
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/30526d06-dc0a-42e0-8de0-649768032b84)
+
+```r
 par(mfrow=c(2,1)) # plot in two rows
-hist(pheno$LDL[pheno$CAD==0])
-hist(pheno$LDL[pheno$CAD==1])
+hist(pheno$LDL[pheno$CAD==0], main="Controls")
+hist(pheno$LDL[pheno$CAD==1], main="CAD cases")
+```
+<details>
+  <summary>  </summary>
 
+```r
+hist(pheno$LDL[pheno$CAD==0], main="Controls", xlim=c(-3,3), col="lightblue2", border="white", xlab="LDL level")
+hist(pheno$LDL[pheno$CAD==1], main="CAD cases", xlim=c(-3,3), col="rosybrown3", border="white", xlab="LDL level")
+```
+</details>
+
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/d69d48f3-4f74-4a6f-b54d-4503caf7945e)
+
+```r
 by(pheno$LDL,pheno$CAD,summary)
 ```
+
 You can use Shapiro-Wilk's method to formally test for normality in R. If p-value > 0.05, then the distribution of the data is not significantly different from normal distribution, i.e. assume to be normal. 
 ```
 shapiro.test(pheno$LDL)
@@ -332,17 +387,18 @@ t.test(pheno$LDL[pheno$CAD==0], pheno$LDL[pheno$CAD==1])
 # t.test(pheno$LDL ~ pheno$CAD)
 ```
 
-### 4.3 correlation 
+### 4.3 Correlation 
 We can also test for correlation between quantitative phenotypes using `cor.test`. To test if TG and LDL levels are correlated, 
 ```r
 # scatter plot
-plot(pheno$LDL, pheno$TG)
-
+plot(pheno$LDL, pheno$HDL)
+```
+```r
 # correlation test
-cor.test(pheno$LDL, pheno$TG,  method = "pearson", use = "complete.obs")
+cor.test(pheno$LDL, pheno$HDL,  method = "pearson", use = "complete.obs")
 ```
 
-### 4.4 regression
+### 4.4 Regression
 We can also perform linear and logistic regression using Generalised linear model (GLM) to test if the regression coefficient is zero or not.
 
 ```r
