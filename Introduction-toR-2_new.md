@@ -220,7 +220,6 @@ plots
 For barplots use the `ggplot()` function to set up the plot and the
 `geom_bar()` function to add the bars.
 
-# Create a dataframe
 
     # Create a dataframe
 
