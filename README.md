@@ -7,7 +7,7 @@
   
 ## Workshop contents and materials
 1. Inroduction to R (1) ([Online tutorials](1-Introduction-to-R.md))
-2. Inroduction to R (2)
+2. Inroduction to R (2) ([Online_tutorials](Introduction-toR-2_new.md))
 3. Basic omics data analysis
 4. Public bioinformatics resources for genomic analysis interpretation 
 5. Machine learning
