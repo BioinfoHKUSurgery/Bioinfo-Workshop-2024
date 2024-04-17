@@ -70,12 +70,6 @@ nested loop structure. Here’s an example:
     ## 2  2            130         200
     ## 3  3            140         220
 
-    #>  id blood_pressure cholesterol
-    #>  1            120         180
-    #>  2            130         200
-    #>  3            140         220
-
-
     #Nested loop to iterate over each patient's data
 
     for (i in 1:nrow(clinical_data)) {
