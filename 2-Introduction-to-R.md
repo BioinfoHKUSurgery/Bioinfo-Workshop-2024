@@ -338,15 +338,6 @@ modifying columns
 
     gene_cluster <- read_tsv('https://github.com/davemcg/davemcg.github.io/raw/master/content/post/scRNA_dotplot_data.tsv.gz')
 
-    ## Rows: 888 Columns: 6
-    ## ── Column specification ────────────────────────────────────────────────────────
-    ## Delimiter: "\t"
-    ## chr (3): Gene, cluster, Group
-    ## dbl (3): cell_ct, cell_exp_ct, count
-    ## 
-    ## ℹ Use `spec()` to retrieve the full column specification for this data.
-    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-
     markers <- gene_cluster$Gene %>% unique()
 
     gene_cluster %>% filter(Gene %in% markers) %>%
