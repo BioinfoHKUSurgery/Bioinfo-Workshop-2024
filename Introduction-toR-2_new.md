@@ -1,6 +1,6 @@
 ### “Introduction to R: data manipulation and visualization”
 
-### 1. Data manipulation
+### 1. Data manipulation and control structures
 
 R’s rich ecosystem of packages, statistical analysis capabilities,
 reproducibility features, and active community make it a powerful tool
@@ -32,11 +32,6 @@ elements and perform a set of operations repeatedly.
     ## [1] 4
     ## [1] 5
 
-    #>[1] 1
-    #>[1] 2 
-    #>[1] 3 
-    #>[1] 4 
-    #>[1] 5
 
 You can also use a for loop to iterate over elements of a vector, list,
 or any other iterable object. Here’s an example:
@@ -54,12 +49,7 @@ or any other iterable object. Here’s an example:
     ## [1] "treatment-1"
     ## [1] "treatment-2"
 
-    #>[1] "control-1" 
-    #>[1] "control-2"
-    #>[1] "treatment-1"
-    #>[1] "treatment-2"
-
-#### 1.2. Nested For loops
+#### 1.1. Nested For loops
 
 To illustrate a nested loop example on clinical data using a data frame
 in R, let’s assume you have a dataset with clinical information about
@@ -67,7 +57,7 @@ patients, including their ID, blood pressure, and cholesterol levels.
 You want to perform a specific operation on each patient’s data using a
 nested loop structure. Here’s an example:
 
-    # Sample clinical data clinical_data
+    # Sample clinical data
 
     clinical_data <- data.frame(id = c(1, 2, 3),
                                 blood_pressure = c(120, 130, 140),
@@ -111,9 +101,6 @@ nested loop structure. Here’s an example:
     ## blood_pressure : 140 
     ## cholesterol : 220
 
-    #> Patient ID: 1 #\>blood_pressure : 120 #\>cholesterol : 180
-    #> Patient ID: 2 #\>blood_pressure : 130 #\>cholesterol : 200
-    #> Patient ID: 3 #\>blood_pressure : 140 #\>cholesterol : 220
 
 #### 1.2. Conditional IF/ELSE statements
 
@@ -155,15 +142,6 @@ BP.
     ## High blood pressure: 140 
     ## Prescription: Zestril
 
-    #> Patient ID: 1
-    #> Cholesterol level: 180
-
-    #> Patient ID: 2 
-    #> Cholesterol level: 200
-
-    #> Patient ID: 3 #\>Cholesterol level: 220
-    #> High blood pressure: 140
-    #> Prescription: Zestril 
 
 #### 1.3. Apply() functions
 
@@ -211,9 +189,8 @@ plots
       labs(x = "age", y = "BP") + 
       ggtitle("Scatter Plot: age vs BP")
 
-![](Introduction-toR-2_new_files/figure-markdown_strict/unnamed-chunk-6-1.png)
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165875740/494321e7-126f-40ab-8e6c-ded7889cd490)
 
-![](Introduction-toR-2_new_files/figure-markdown_strict/unnamed-chunk-7-1.png)
 
 ##### 2.2 Basic barplot in ggplo2
 
@@ -232,7 +209,7 @@ For barplots use the `ggplot()` function to set up the plot and the
       labs(x = "Condition", y = "Count") +
       ggtitle("Bar Plot")
 
-![](Introduction-toR-2_new_files/figure-markdown_strict/unnamed-chunk-8-1.png)
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165875740/3376f6bd-d66e-4dfc-8cfd-ab06aeb2de94)
 
 \#####. 2.3. Basic boxplots
 
@@ -254,7 +231,7 @@ represents the corresponding measurements or observations.
       labs(x = "Group", y = "Value") +
       ggtitle("Boxplot of treatment groups")
 
-![](Introduction-toR-2_new_files/figure-markdown_strict/unnamed-chunk-9-1.png)
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165875740/2c4de8b3-dd38-4182-be56-141e0a195ae2)
 
 The `geom_boxplot()` function adds the boxplots to the plot. By default,
 the boxplots show the median, interquartile range, and whiskers. You can
@@ -281,11 +258,12 @@ polynormal regression fitting (loess) can be used.
     geom_smooth(method = "lm", se = FALSE) +
     xlab("TPM Gene A") +
     ylab("TPM Gene B") +
-    ggtitle("Clinical Data Scatter Plot with Trendline")
+    ggtitle("Gene Expression Scatter Plot with Trendline")
 
     ## `geom_smooth()` using formula = 'y ~ x'
 
-![](Introduction-toR-2_new_files/figure-markdown_strict/unnamed-chunk-10-1.png)
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165875740/f8cb4626-5937-48b8-9218-4c186a5cf869)
+
 
 We can also add standard error layer to the graph
 
@@ -294,11 +272,11 @@ We can also add standard error layer to the graph
       geom_smooth(method = "lm", se=TRUE) +
       xlab("TPM Gene A") +
       ylab("TPM Gene B") +
-      ggtitle("Clinical Data Scatter Plot with Trendline")
+      ggtitle("Gene Expression Scatter Plot with Trendline and SE")
 
     ## `geom_smooth()` using formula = 'y ~ x'
 
-![](Introduction-toR-2_new_files/figure-markdown_strict/unnamed-chunk-11-1.png)
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165875740/9c8711b3-4ccd-440f-9864-2c673a468086)
 
 \#####. 2.5. Advanced Boxplots
 
@@ -349,7 +327,7 @@ and background with predefined styles. In the case below the
     ## Warning in RColorBrewer::brewer.pal(n, pal): n too large, allowed maximum for palette RdPu is 9
     ## Returning the palette you asked for with that many colors
 
-![](Introduction-toR-2_new_files/figure-markdown_strict/unnamed-chunk-12-1.png)
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165875740/039ff0ea-dde1-40b6-83a5-113829aeb13d)
 
 \#####. 2.6. Advanced plotting: Dot plots for scRNA-seq data.
 
@@ -389,4 +367,4 @@ modifying columns
     theme(axis.ticks = element_blank()) +
     scale_color_gradientn(colours = viridis:: viridis (20), limits = c(0,4), oob = scales::squish, name = 'log2 (count + 12')
 
-![](Introduction-toR-2_new_files/figure-markdown_strict/unnamed-chunk-13-1.png)
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165875740/5e6180df-d00f-43e3-93e1-a0f2ca9e7901)
