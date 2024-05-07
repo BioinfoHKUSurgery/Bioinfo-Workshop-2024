@@ -3,15 +3,16 @@
 ## Session information
 + April 3, 2024 (15:00-17:00): Introduction to R (1) by Dr. Clara Tang
 + April 17, 2024 (15:00-17:00): Introduction to R (2) by Dr. Paul David Blakeley
-+ ...
++ May 8, 2024 (15:00-17:00): Basic omics data analysis (1) - single cell RNA sequencing by Dr. Clara Tang
   
 ## Workshop contents and materials
 1. Inroduction to R (1) ([Online tutorials](1-Introduction-to-R.md))
 2. Inroduction to R (2) ([Online_tutorials](Introduction-toR-2_new.md))
-3. Basic omics data analysis
-4. Public bioinformatics resources for genomic analysis interpretation 
-5. Machine learning
-6. Bridging the research findings to clinical application
+3. Basic omics data analysis (1) - single cell RNA sequencing ([Online tutorials](3-singleCell-RNAseq-Seurat.md))
+4. Basic omics data analysis (2)
+5. Public bioinformatics resources for genomic analysis interpretation 
+6. Machine learning
+7. Bridging the research findings to clinical application
 
 ## Software needed
 - R, RStudio
