@@ -33,6 +33,8 @@ The count matrix were obtained after alignment to transcriptome using Cell Range
   - matrix.mtx
 
 ![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/0ed7d89c-cda4-49d0-a91d-bae0f06f4376)
+<img src="https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/a8698755-171c-45f2-86be-e34641f3ce50" width=300 >
+
 
 - .h5 Seurat object
 
