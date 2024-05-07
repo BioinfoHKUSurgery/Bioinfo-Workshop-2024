@@ -1,5 +1,5 @@
 # Single cell/nuclei RNA-sequencing (scRNA-seq/snRNA-seq)
-This hands-on session will cover the basic workflow of single cell/nuclei RNA-sequencing after alignment, from quality control processing, dimension reduction visualization, clustering to integration, following the [Vignette in Seurat v5](https://satijalab.org/seurat/articles/pbmc3k_tutorial).
+This hands-on session will cover the basic workflow of single cell/nuclei RNA-sequencing after alignment, from quality control processing, dimension reduction visualization, and clustering.
 
 <img src="https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/830cc3d1-63f6-46b8-a662-ea64faea95bc" width=600 >
 
@@ -11,7 +11,7 @@ First, we will start by setting a working directory to help organize the data, c
 - Create a folder named `scRNAseq_test` in your preferred directory
 - Create a `Data` folder under `scRNAseq_test`
 
-From RStudio, we can then set the working directory via `Session > Set Working Directory > Choose Directory`.
+From RStudio, we can then set the working directory as `scRNAseq_test` via `Session > Set Working Directory > Choose Directory`.
 
 ## Installation
 ### [Seurat v5](https://satijalab.org/seurat/)
@@ -19,6 +19,10 @@ Seurat can be installed like other packages in R using:
 ```r
 install.packages('Seurat')
 library(Seurat)
+library(ggplot2)
+
+setRepositories(ind = 1:3, addURLs = c('https://satijalab.r-universe.dev', 'https://bnprks.r-universe.dev/'))
+install.packages("glmGamPoi")
 ```
     
 ## Dataset
@@ -107,49 +111,53 @@ More examples on the barcode rank plot can be found under [Technical Note: Inter
 
 Further details on quality assessment based on web summary.html can be found [here](https://www.10xgenomics.com/analysis-guides/quality-assessment-using-the-cell-ranger-web-summary)
 
-## 1. Create Seurat object
-We next use the count matrix to create a Seurat object. 
+## 1. Analysis using Seurat
+This part of the tutorial is adapted from [Vignette in Seurat v5](https://satijalab.org/seurat/articles/pbmc3k_tutorial) with some modifications.
+
+### 1.1 Create Seurat object
+We next read in the count matrix to create a Seurat object. The object serves as a container that contains both data (like the count matrix) and analysis (like PCA, or clustering results) for a single-cell dataset. For example, in Seurat v5, the count matrix is stored in `pbmc[["RNA"]]$counts`.
+
 ```r
 # Load the PBMC dataset
-pbmc.data <- Read10X(data.dir = "~\Downloads\pbmc3k_filtered_gene_bc_matrices\filtered_gene_bc_matrices\hg19")
+pbmc.data <- Read10X(data.dir = "Data/filtered_gene_bc_matrices/hg19")
 
 # Initialize the Seurat object with the raw (non-normalized data).
 pbmc <- CreateSeuratObject(counts = pbmc.data, project = "pbmc3k", min.cells = 3, min.features = 200)
 pbmc
-# An object of class Seurat 
-# 13714 features across 2700 samples within 1 assay 
-# Active assay: RNA (13714 features, 0 variable features)
-# 1 layer present: counts
+## An object of class Seurat 
+## 13714 features across 2700 samples within 1 assay 
+## Active assay: RNA (13714 features, 0 variable features)
+## 1 layer present: counts
 ```
 ```r
 # Lets examine a few genes in the first thirty cells
 pbmc.data[c("CD3D", "TCL1A", "MS4A1"), 1:30]
-# 3 x 30 sparse Matrix of class "dgCMatrix"
-#  [[ suppressing 30 column names ‘AAACATACAACCAC-1’, ‘AAACATTGAGCTAC-1’, ‘AAACATTGATCAGC-1’ ... ]]
-#                                                                   
-# CD3D  4 . 10 . . 1 2 3 1 . . 2 7 1 . . 1 3 . 2  3 . . . . . 3 4 1 5
-# TCL1A . .  . . . . . . 1 . . . . . . . . . . .  . 1 . . . . . . . .
-# MS4A1 . 6  . . . . . . 1 1 1 . . . . . . . . . 36 1 2 . . 2 . . . .
+## 3 x 30 sparse Matrix of class "dgCMatrix"
+##  [[ suppressing 30 column names ‘AAACATACAACCAC-1’, ‘AAACATTGAGCTAC-1’, ‘AAACATTGATCAGC-1’ ... ]]
+##                                                                   
+## CD3D  4 . 10 . . 1 2 3 1 . . 2 7 1 . . 1 3 . 2  3 . . . . . 3 4 1 5
+## TCL1A . .  . . . . . . 1 . . . . . . . . . . .  . 1 . . . . . . . .
+## MS4A1 . 6  . . . . . . 1 1 1 . . . . . . . . . 36 1 2 . . 2 . . . .
 ```
 The . values in the matrix represent 0s (no molecules detected). Since most values in an scRNA-seq matrix are 0, Seurat uses a sparse-matrix representation whenever possible. This results in significant memory and speed savings for Drop-seq/inDrop/10x data.
 
-## 2. Data processing - Quality control 
-The steps below represent the selection and filtration of cells based on QC metrics. A few QC metrics commonly used by the community include:
+### 1.2 Data processing - Quality control 
+The steps below represent the standard pre-processing workflow for the selection and filtration of cells based on QC metrics. A few QC metrics commonly used by the community include:
 
-- The number of unique genes detected in each cell.
-- Low-quality cells or empty droplets will often have very few genes
-- Cell doublets or multiplets may exhibit an aberrantly high gene count
-- the total number of molecules detected within a cell (correlates strongly with unique genes)
-- The percentage of reads that map to the mitochondrial genome
-- Low-quality / dying cells often exhibit extensive mitochondrial contamination
+- `nFeature_RNA`: Number of unique genes detected in each cell
+    - Low-quality cells or empty droplets will often have very few genes
+    - Cell doublets or multiplets may exhibit an aberrantly high gene count
+- `nCount_RNA`: Total number of molecules detected within a cell (correlates strongly with unique genes)
+- `percent.mt`: Percentage of reads that map to the mitochondrial genome
+    - Low-quality / dying cells often exhibit extensive mitochondrial contamination
 
-We calculate mitochondrial QC metrics with the PercentageFeatureSet() function, which calculates the percentage of counts originating from a set of features. We use the set of all genes starting with MT- as a set of mitochondrial genes
+`nFeature_RNA` and `nCount_RNA` are automatically calculated during CreateSeuratObject(). We can calculate mitochondrial QC metrics `percent.mt` with the PercentageFeatureSet() function, which calculates the percentage of counts originating from a set of features (e.g. starting with MT- as a set of mitochondrial genes).
 ```r
 # The [[ operator can add columns to object metadata. This is a great place to stash QC stats
 pbmc[["percent.mt"]] <- PercentageFeatureSet(pbmc, pattern = "^MT-")
 ```
-The number of unique genes and total molecules are automatically calculated during CreateSeuratObject()
-You can find them stored in the object meta data
+
+You can find the QC metrics stored in the object meta data
 ```r
 # Show QC metrics for the first 5 cells
 head(pbmc@meta.data, 5)
@@ -161,12 +169,9 @@ head(pbmc@meta.data, 5)
 ## AAACCGTGTATGCG-1     pbmc3k        980          521  1.2244898
 ```
 
-orig.ident:
-nCount_RNA:
-nFeature_RNA:
-percent.mt:
-
 In the example below, we visualize QC metrics, and use these to filter cells.
+- We filter cells that have unique feature counts over 2,500 or less than 200
+- We filter cells that have >5% mitochondrial counts
 ```r
 # Visualize QC metrics as a violin plot
 VlnPlot(pbmc, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
@@ -183,56 +188,48 @@ plot1 + plot2
 ```
 ![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/4e6fc677-aab6-4ad4-897f-df57c5810cf6)
 
-
-We filter cells that have unique feature counts over 2,500 or less than 200
-We filter cells that have >5% mitochondrial counts
 ```r
+# Retain cells with nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5
 pbmc <- subset(pbmc, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5)
+pbmc
+## An object of class Seurat 
+## 13714 features across 2638 samples within 1 assay 
+## Active assay: RNA (13714 features, 0 variable features)
+##  1 layer present: counts
 ```
-## 3. Normalization and scaling (Replace with SCTransform)
-After removing unwanted cells from the dataset, the next step is to normalize the data. By default, we employ a global-scaling normalization method “LogNormalize” that normalizes the feature expression measurements for each cell by the total expression, multiplies this by a scale factor (10,000 by default), and log-transforms the result. In Seurat v5, Normalized values are stored in pbmc[["RNA"]]$data.
-For clarity, in this previous line of code (and in future commands), we provide the default values for certain parameters in the function call. However, this isn’t required and the same behavior can be achieved with:
+
+### 1.3 Normalization and scaling (Replace with SCTransform)
+After removing unwanted cells from the dataset, the next step is to normalize the data. 
+
+Standard workflow runs `NormalizeData`, `FindVariableFeatures`, and `ScaleData` that normalizes the feature expression measurements for each cell by the total expression, multiplies this by a scale factor (10,000 by default), and log-transforms the result. 
+
+A newer modeling framework for normalization and variance stabilization, called 'SCTransform`, was proposed to improve common downstream analytical tasks such as variable gene selection, dimensional reduction, and differential expression. 
+
+After running `SCTransform`, transformed data will be available in the `SCT` assay. During normalization, we can also remove confounding sources of variation, for example, mitochondrial mapping percentage,
+
 ```r
-# pbmc <- NormalizeData(pbmc, normalization.method = "LogNormalize", scale.factor = 10000)
-pbmc <- NormalizeData(pbmc)
+library(sctransform)
+
+# run sctransform
+pbmc <- SCTransform(pbmc, vars.to.regress = "percent.mt", verbose = FALSE)
+pbmc
 ```
-While this method of normalization is standard and widely used in scRNA-seq analysis, global-scaling relies on an assumption that each cell originally contains the same number of RNA molecules. We and others have developed alternative workflows for the single cell preprocessing that do not make these assumptions. For users who are interested, please check out our SCTransform() normalization workflow. The method is described in ourpaper, with a separate vignette using Seurat here. The use of SCTransform replaces the need to run NormalizeData, FindVariableFeatures, or ScaleData (described below.)
 
+`pbmc[["SCT"]]$scale.data`: contains the residuals (normalized values), and is used directly as input to PCA. Please note that this matrix is non-sparse, and can therefore take up a lot of memory if stored for all genes. To save memory, we store these values only for highly variable genes (3,000 by default), by setting the return.only.var.genes = TRUE by default in the SCTransform() function call.
+`pbmc[["SCT"]]$counts`: stores ‘corrected’ UMI counts. To assist with visualization and interpretation, we also convert Pearson residuals back to ‘corrected’ UMI counts. You can interpret these as the UMI counts we would expect to observe if all cells were sequenced to the same depth. 
 
-## 4. Dimension reduction visualization
-We next calculate a subset of features that exhibit high cell-to-cell variation in the dataset (i.e, they are highly expressed in some cells, and lowly expressed in others). We and others have found that focusing on these genes in downstream analysis helps to highlight biological signal in single-cell datasets.
+### 1.4 Dimension reduction and visualization
+When using sctransform, more PCs can be included as the sctransform workflow performs more effective normalization which removes technical effects from the data.
 
-Our procedure in Seurat is described in detail here, and improves on previous versions by directly modeling the mean-variance relationship inherent in single-cell data, and is implemented in the FindVariableFeatures() function. By default, we return 2,000 features per dataset. These will be used in downstream analysis, like PCA.
 ```r
-pbmc <- FindVariableFeatures(pbmc, selection.method = "vst", nfeatures = 2000)
+# These are now standard steps in the Seurat workflow for visualization and clustering
+pbmc <- RunPCA(pbmc, verbose = FALSE)
+pbmc <- RunUMAP(pbmc, dims = 1:30, verbose = FALSE)
 
-# Identify the 10 most highly variable genes
-top10 <- head(VariableFeatures(pbmc), 10)
-
-# plot variable features with and without labels
-plot1 <- VariableFeaturePlot(pbmc)
-plot2 <- LabelPoints(plot = plot1, points = top10, repel = TRUE)
-plot1 + plot2
+pbmc <- FindNeighbors(pbmc, dims = 1:30, verbose = FALSE)
+pbmc <- FindClusters(pbmc, verbose = FALSE)
+DimPlot(pbmc, label = TRUE)
 ```
-![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/bf6355d3-93e6-4e4f-b600-be18c8fed443)
-
-Next, we apply a linear transformation (‘scaling’) that is a standard pre-processing step prior to dimensional reduction techniques like PCA. The ScaleData() function:
-
-Shifts the expression of each gene, so that the mean expression across cells is 0
-Scales the expression of each gene, so that the variance across cells is 1
-This step gives equal weight in downstream analyses, so that highly-expressed genes do not dominate
-The results of this are stored in pbmc[["RNA"]]$scale.data
-By default, only variable features are scaled.
-You can specify the features argument to scale additional features
-```r
-all.genes <- rownames(pbmc)
-pbmc <- ScaleData(pbmc, features = all.genes)
-```
-n Seurat, we also use the ScaleData() function to remove unwanted sources of variation from a single-cell dataset. For example, we could ‘regress out’ heterogeneity associated with (for example) cell cycle stage, or mitochondrial contamination i.e.:
-```r
-pbmc <- ScaleData(pbmc, vars.to.regress = "percent.mt")
-```
-However, particularly for advanced users who would like to use this functionality, we strongly recommend the use of our new normalization workflow, SCTransform(). The method is described in our paper, with a separate vignette using Seurat here. As with ScaleData(), the function SCTransform() also includes a vars.to.regress parameter.
 ## 5. Clustering
 ## 6. Marker genes identification
 ## 7. Integration
