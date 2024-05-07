@@ -1,6 +1,8 @@
 # Single cell/nuclei RNA-sequencing (scRNA-seq/snRNA-seq)
 This hands-on session will cover the basic workflow of single cell/nuclei RNA-sequencing after alignment, from quality control processing, dimension reduction visualization, clustering to integration, following the [Vignette in Seurat v5](https://satijalab.org/seurat/articles/pbmc3k_tutorial).
-![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/830cc3d1-63f6-46b8-a662-ea64faea95bc)
+
+<img src="https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/830cc3d1-63f6-46b8-a662-ea64faea95bc" width=600 >
+
 Figure modified from: https://hbctraining.github.io/scRNA-seq_online/lessons/postQC_workflow.html
 
 
@@ -34,9 +36,7 @@ The count matrix were obtained after alignment to transcriptome using Cell Range
 
 - .h5 Seurat object
 
-
-
-
+## 1. Create Seurat object
 ```r
 # Load the PBMC dataset
 pbmc.data <- Read10X(data.dir = "~\Downloads\pbmc3k_filtered_gene_bc_matrices\filtered_gene_bc_matrices\hg19")
@@ -45,21 +45,9 @@ pbmc.data <- Read10X(data.dir = "~\Downloads\pbmc3k_filtered_gene_bc_matrices\fi
 pbmc <- CreateSeuratObject(counts = pbmc.data, project = "pbmc3k", min.cells = 3, min.features = 200)
 ```
 
-## Dataset
-- Software and data to be downloaded
-- Seurat
-`R` is a free, open-source programming language used for statistical computing and graphical presentation while `RStudio` is an integrated development environment (IDE) featureing tools for plotting, viewing history, debugging and managing your workspace for R and Python. 
-
-In the era of data science, there are several pros and cons of using R programming in analyzing clinical or biological data:
-
-<img src="https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/3d928712-a632-43e1-b7da-0bcdfc445d96" width=600 >
-
-
-## 1. Installation
-For this and the coming tutorials, you will need to download the data in tab-delimited text file format
-- [Pheno.txt](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/blob/be74dc2428d340c467562eab9ce580caea905a5d/Data/1-Introduction-to-R/Pheno.txt) 
-- [Mutations.txt](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/blob/be74dc2428d340c467562eab9ce580caea905a5d/Data/1-Introduction-to-R/Mutations.txt)
-
-and install `R` and `RStudio`
-- R: [https://cloud.r-project.org/](https://cloud.r-project.org)
-- RStudio: [https://posit.co/download/rstudio-desktop/](https://posit.co/download/rstudio-desktop/)
+## 2. Data processing - Quality control 
+## 3. Normalization and scaling
+## 4. Dimension reduction visualization
+## 5. Clustering
+## 6. Marker genes identification
+## 7. Integration
