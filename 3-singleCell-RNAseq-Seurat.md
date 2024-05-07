@@ -1,5 +1,8 @@
 # Single cell/nuclei RNA-sequencing (scRNA-seq/snRNA-seq)
 This hands-on session will cover the basic workflow of single cell/nuclei RNA-sequencing after alignment, from quality control processing, dimension reduction visualization, clustering to integration, following the [Vignette in Seurat v5](https://satijalab.org/seurat/articles/pbmc3k_tutorial).
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/15998fec-1a1f-41b9-8a67-c3adf1af3c95)
+
+Ref: https://biostatsquid.com/scrnaseq-preprocessing-workflow-seurat/
 
 ## Setup a new working directory
 First, we will start by setting a working directory to help organize the data, codes and output used/generated in this hands-on session. You can create a folder using *File Explorer* in Windows or *Finder* in mac:
