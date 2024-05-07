@@ -71,18 +71,38 @@ More recent versions of cellranger now also output using the .h5 file format, wh
 It also outputs an indexed BAM file containing position-sorted reads aligned to the genome and transcriptome, as well as unaligned reads. It is required for some of the secondary analyses, like RNA velocity.
 
 #### **0.2.4 Web Summary**:
-A summary HTML file contains summary metrics and automated secondary analysis results. Warning messages are reported if there is potential issue in quality of the data. 
+A summary HTML file contains `summary` metrics and automated secondary `Analysis` results. Warning messages are reported if there is potential issue in quality of the data. 
 Further details on quality assessment based on web summary.html can be found [here](https://www.10xgenomics.com/analysis-guides/quality-assessment-using-the-cell-ranger-web-summary)
 
 ##### 0.2.4.1 Key metrics
 `Estimated Number of Cells`: number of barcodes associated with cells
+
 `Mean Reads per Cell`: total number of sequenced reads divided by the number of cells. A minimum of 20,000 read pairs per cell is recommended.
-`Median Genes per Cell`: median number of genes detected per cell-associated barcode, which is dependent on cell type and sequencing depth.    
+
+`Median Genes per Cell`: median number of genes detected per cell-associated barcode, which is dependent on cell type and sequencing depth.   
+
 ![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/6056d707-6a81-4023-8354-a3cf1a748414)
 
-##### 0.2.4.2 Sequencing metrics
+##### 0.2.4.2 Barcode rank plot
+The most important and informative plot in the Gene Expression Web Summary is the `Barcode Rank Plot` under the `Cells` dashboard, which shows the distribution of UMI counts in barcodes and barcodes inferred to be associated with cells. The y-axis is the number of UMI counts mapped to each barcode and the x-axis is the number of barcodes below that value. 
+
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/eb7edced-69c1-4c04-9199-3ec1dde46200)
+
+**Typical sample (left)**: distinctive shape, which is referred to as a "cliff and knee". The blue-to-gray transition (green arrow) is referred to as the cliff; the solid gray (blue arrow) is the knee. The steep cliff is indicative of good separation between the cell-associated barcodes and the barcodes associated with empty GEMs. 
+
+**Heterogeneous sample (right)**: bimodal plot with two cliff and knee distributions. However, there should still be clear separation between the barcodes called as cells (blue) and barcodes called as background (gray).
+
+More examples on the barcode rank plot can be found under [Technical Note: Interpreting Cell Ranger Web Summary Files for Single Cell Gene Expression Assays](https://www.10xgenomics.com/support/single-cell-gene-expression/documentation/steps/sequencing/interpreting-cell-ranger-web-summary-files-for-single-cell-gene-expression-assays). 
+
+##### 0.2.4.3 Sequencing metrics
+
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/afab78f2-848e-48e1-a361-947ec425b913)
+
+##### 0.2.4.4 Mapping metrics
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/d00256ae-0603-4e12-8c4f-24bb90d425e1)
 
 
+5. 
 ## 1. Create Seurat object
 We next use the count matrix to create a Seurat object. 
 ```r
