@@ -232,4 +232,19 @@ DimPlot(pbmc, label = TRUE)
 ```
 ## 5. Clustering
 ## 6. Marker genes identification
+These are now standard steps in the Seurat workflow for visualization and clustering
+```r
+# These are now standard steps in the Seurat workflow for visualization and clustering
+## CD8 T cell populations (naive, memory, effector) - CD8A, GZMK, CCL5
+
+# Visualize canonical marker genes as violin plots.
+VlnPlot(pbmc, features = c("CD8A", "GZMK", "CCL5"), pt.size = 0.2, ncol = 3)
+# Visualize canonical marker genes on the sctransform embedding.
+FeaturePlot(pbmc, features = c("CD8A", "GZMK", "CCL5"), pt.size = 0.2, ncol = 3)
+
+## B cell cluster - TCL1A, FCER2
+VlnPlot(pbmc, features = c("TCL1A", "FCER2"), pt.size = 0.2, ncol = 2)
+FeaturePlot(pbmc, features = c("TCL1A", "FCER2"), pt.size = 0.2, ncol = 3)
+```
+
 ## 7. Integration
