@@ -1,4 +1,4 @@
-# Single cell/nuclei RNA-sequencing (scRNA-seq/snRNA-seq)
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/d04c5c61-42ab-4889-a566-0035c5f6b93e)# Single cell/nuclei RNA-sequencing (scRNA-seq/snRNA-seq)
 This hands-on session will cover the basic workflow of single cell/nuclei RNA-sequencing after alignment, from quality control processing, dimension reduction visualization, clustering to integration, following the [Vignette in Seurat v5](https://satijalab.org/seurat/articles/pbmc3k_tutorial).
 
 <img src="https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/830cc3d1-63f6-46b8-a662-ea64faea95bc" width=600 >
@@ -22,15 +22,38 @@ library(Seurat)
 ```
 
 ## Dataset
-In this tutorial, we will be analyzing the a dataset of Peripheral Blood Mononuclear Cells (PBMC) freely available from 10X Genomics. The raw data can be downloaded from [here](https://cf.10xgenomics.com/samples/cell/pbmc3k/pbmc3k_filtered_gene_bc_matrices.tar.gz). There are 2,700 single cells that were sequenced on the Illumina NextSeq 500.
+In this tutorial, we will be analyzing the a dataset of Peripheral Blood Mononuclear Cells (PBMC) freely available from 10X Genomics. The data can be downloaded from [here](https://cf.10xgenomics.com/samples/cell/pbmc3k/pbmc3k_filtered_gene_bc_matrices.tar.gz). There are 2,700 single cells that were sequenced on the Illumina NextSeq 500.
 
 The count matrix were obtained after alignment to transcriptome using Cell Ranger.
 
-### Data format
-- Count matrix
-  - barcodes.tsv
-  - genes.tsv
-  - matrix.mtx
+## 0. Cell Ranger
+Cell Ranger is an analysis pipeline for processing the Chromium 10X single-cell data. It includes functions to align reads, generate feature-barcode matrices, perform clustering, integration and other secondary analysis, and more. Usually, it is used for alignment to create a feature-barcode matrix that can be further processed by `Seurat`.
+
+### 0.1 Cell Ranger workflow 
+The detailed workflow of Cell Ranger can be found [here](https://www.10xgenomics.com/support/software/cell-ranger/latest/getting-started/cr-what-is-cell-ranger#workflows).
+
+#### One sample, one GEM well, one flow cell
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/30e8b935-ccb7-41a7-b545-839e065c2377)
+#### One sample, one GEM well, multiple flow cells
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/fd9a333c-d5de-4308-8a13-9674e1e0576a)
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/9101a050-ae0f-4169-a246-64f4b1eea733)
+
+The Cell Ranger workflow starts with demultiplexing the raw base call (BCL) files for each flow cell directory. You may use `cellranger mkfastq` or one of Illumina's demultiplexing software `bcl2fastq`. 
+
+If you are beginning with FASTQ files that have already been demultiplexed, you can directly run `cellranger count` for alignment, filtering, barcode counting, and UMI counting to generate feature-barcode matrices. 
+
+### 0.2 Cell Ranger count output format
+The `outs` folder contains the pipeline output files that can be used for downstream analysis in `Seurat`.
+<img src="https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/16cb5ed9-6341-4224-97e1-f7a777be0f3e" width=600 >
+
+- **Count matrix**: Each element of the matrix is the number of UMIs associated with a feature (row) and a barcode (column).
+```{ .text .no-copy }
+filtered_feature_bc_matrix
+├── hg19
+    ├── barcodes.tsv.gz
+    ├── features.tsv.gz
+    └── matrix.mtx.gz
+```
 
 ![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/0ed7d89c-cda4-49d0-a91d-bae0f06f4376)
 <img src="https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/a8698755-171c-45f2-86be-e34641f3ce50" width=300 >
