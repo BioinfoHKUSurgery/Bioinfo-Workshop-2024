@@ -1,4 +1,4 @@
-![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/d04c5c61-42ab-4889-a566-0035c5f6b93e)# Single cell/nuclei RNA-sequencing (scRNA-seq/snRNA-seq)
+# Single cell/nuclei RNA-sequencing (scRNA-seq/snRNA-seq)
 This hands-on session will cover the basic workflow of single cell/nuclei RNA-sequencing after alignment, from quality control processing, dimension reduction visualization, clustering to integration, following the [Vignette in Seurat v5](https://satijalab.org/seurat/articles/pbmc3k_tutorial).
 
 <img src="https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/830cc3d1-63f6-46b8-a662-ea64faea95bc" width=600 >
@@ -20,16 +20,18 @@ Seurat can be installed like other packages in R using:
 install.packages('Seurat')
 library(Seurat)
 ```
-
+    
 ## Dataset
 In this tutorial, we will be analyzing the a dataset of Peripheral Blood Mononuclear Cells (PBMC) freely available from 10X Genomics. The data can be downloaded from [here](https://cf.10xgenomics.com/samples/cell/pbmc3k/pbmc3k_filtered_gene_bc_matrices.tar.gz). There are 2,700 single cells that were sequenced on the Illumina NextSeq 500.
+
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/0ed7d89c-cda4-49d0-a91d-bae0f06f4376)
 
 The count matrix were obtained after alignment to transcriptome using Cell Ranger.
 
 ## 0. Cell Ranger
 Cell Ranger is an analysis pipeline for processing the Chromium 10X single-cell data. It includes functions to align reads, generate feature-barcode matrices, perform clustering, integration and other secondary analysis, and more. Usually, it is used for alignment to create a feature-barcode matrix that can be further processed by `Seurat`.
 
-### 0.1 Cell Ranger workflow 
+### *0.1 Cell Ranger workflow* 
 The detailed workflow of Cell Ranger can be found [here](https://www.10xgenomics.com/support/software/cell-ranger/latest/getting-started/cr-what-is-cell-ranger#workflows).
 
 #### One sample, one GEM well, one flow cell
@@ -42,25 +44,44 @@ The Cell Ranger workflow starts with demultiplexing the raw base call (BCL) file
 
 If you are beginning with FASTQ files that have already been demultiplexed, you can directly run `cellranger count` for alignment, filtering, barcode counting, and UMI counting to generate feature-barcode matrices. 
 
-### 0.2 Cell Ranger count output format
+### *0.2 Cell Ranger count output*
 The `outs` folder contains the pipeline output files that can be used for downstream analysis in `Seurat`.
 <img src="https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/16cb5ed9-6341-4224-97e1-f7a777be0f3e" width=600 >
 
-- **Count matrix**: Each element of the matrix is the number of UMIs associated with a feature (row) and a barcode (column).
-```{ .text .no-copy }
+#### **0.2.1 Feature Barcode Matrices (MEX Format)**:
+It contains gzipped TSV files with feature and barcode sequences corresponding to row and column indices respectively.
+<img src="https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/a8698755-171c-45f2-86be-e34641f3ce50" width=300 >
+
+```
 filtered_feature_bc_matrix
 ├── hg19
     ├── barcodes.tsv.gz
     ├── features.tsv.gz
     └── matrix.mtx.gz
 ```
+`filtered_feature_bc_matrix`: Includes only cell associated barcodes that cellranger determined as coming from real cells instead of background. Background barcodes are only included in the `raw_feature_bc_matrix`. For more information: https://kb.10xgenomics.com/hc/en-us/articles/115003480523-How-are-barcodes-classified-as-cell-associated-.
+- matrix.mtx.gz: reads count as sparse matrices where each row indicates one feature and each column indicates one cell. The row and column indices correspond to `features.tsv.gz` and `barcodes.tsv.gz` files respectively
+- `features.tsv.gz`: feature ID (i.e. Ensembl gene ID) and gene name
+- `barcodes.tsv.gz`: barcode sequences
 
-![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/0ed7d89c-cda4-49d0-a91d-bae0f06f4376)
-<img src="https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/a8698755-171c-45f2-86be-e34641f3ce50" width=300 >
+#### **0.2.2 Molecule Info H5**:
+More recent versions of cellranger now also output using the .h5 file format, which can be read in using the `Read10X_h5()` function in `Seurat`.
 
+#### **0.2.3 BAM**:
+It also outputs an indexed BAM file containing position-sorted reads aligned to the genome and transcriptome, as well as unaligned reads. It is required for some of the secondary analyses, like RNA velocity.
 
-- .h5 Seurat object
-More recent versions of cellranger now also output using the h5 file format, which can be read in using the `Read10X_h5()` function in Seurat.
+#### **0.2.4 Web Summary**:
+A summary HTML file contains summary metrics and automated secondary analysis results. Warning messages are reported if there is potential issue in quality of the data. 
+Further details on quality assessment based on web summary.html can be found [here](https://www.10xgenomics.com/analysis-guides/quality-assessment-using-the-cell-ranger-web-summary)
+
+##### 0.2.4.1 Key metrics
+`Estimated Number of Cells`: number of barcodes associated with cells
+`Mean Reads per Cell`: total number of sequenced reads divided by the number of cells. A minimum of 20,000 read pairs per cell is recommended.
+`Median Genes per Cell`: median number of genes detected per cell-associated barcode, which is dependent on cell type and sequencing depth.    
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/6056d707-6a81-4023-8354-a3cf1a748414)
+
+##### 0.2.4.2 Sequencing metrics
+
 
 ## 1. Create Seurat object
 We next use the count matrix to create a Seurat object. 
