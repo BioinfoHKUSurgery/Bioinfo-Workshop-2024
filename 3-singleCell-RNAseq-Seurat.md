@@ -71,8 +71,7 @@ More recent versions of cellranger now also output using the .h5 file format, wh
 It also outputs an indexed BAM file containing position-sorted reads aligned to the genome and transcriptome, as well as unaligned reads. It is required for some of the secondary analyses, like RNA velocity.
 
 #### **0.2.4 Web Summary**:
-A summary HTML file contains `summary` metrics and automated secondary `Analysis` results. Warning messages are reported if there is potential issue in quality of the data. 
-Further details on quality assessment based on web summary.html can be found [here](https://www.10xgenomics.com/analysis-guides/quality-assessment-using-the-cell-ranger-web-summary)
+A summary HTML file contains `summary` metrics and automated secondary `Analysis` results. 
 
 ##### 0.2.4.1 Key metrics
 `Estimated Number of Cells`: number of barcodes associated with cells
@@ -101,8 +100,13 @@ More examples on the barcode rank plot can be found under [Technical Note: Inter
 ##### 0.2.4.4 Mapping metrics
 ![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/d00256ae-0603-4e12-8c4f-24bb90d425e1)
 
+> [!WARNING]  
+> Warning messages are reported if there are potential issues in quality of the data. 
 
-5. 
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/f101c4f1-e4d8-4238-9f6f-73f659411eae)
+
+Further details on quality assessment based on web summary.html can be found [here](https://www.10xgenomics.com/analysis-guides/quality-assessment-using-the-cell-ranger-web-summary)
+
 ## 1. Create Seurat object
 We next use the count matrix to create a Seurat object. 
 ```r
