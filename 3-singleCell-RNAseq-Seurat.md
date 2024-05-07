@@ -1,18 +1,39 @@
 # Single cell/nuclei RNA-sequencing (scRNA-seq/snRNA-seq)
+This hands-on session will cover the basic workflow of single cell/nuclei RNA-sequencing after alignment, from quality control processing, dimension reduction visualization, clustering to integration, following the [Vignette in Seurat v5](https://satijalab.org/seurat/articles/pbmc3k_tutorial).
+
+## Setup a new working directory
+First, we will start by setting a working directory to help organize the data, codes and output used/generated in this hands-on session. You can create a folder using *File Explorer* in Windows or *Finder* in mac:
+- Create a folder named `scRNAseq_test` in your preferred directory
+- Create a `Data` folder under `scRNAseq_test`
+
+From RStudio, we can then set the working directory via `Session > Set Working Directory > Choose Directory`.
 
 ## Installation
-### Setup a new working directory
-
-### Seurat v5 ()
-  
-```{R}
+### [Seurat v5](https://satijalab.org/seurat/)
+Seurat can be installed like other packages in R using: 
+```r
 install.packages('Seurat')
 library(Seurat)
 ```
+## Dataset
+In this tutorial, we will be analyzing the a dataset of Peripheral Blood Mononuclear Cells (PBMC) freely available from 10X Genomics. The raw data can be found [here](https://cf.10xgenomics.com/samples/cell/pbmc3k/pbmc3k_filtered_gene_bc_matrices.tar.gz). There are 2,700 single cells that were sequenced on the Illumina NextSeq 500.
 
-https://satijalab.org/seurat/articles/pbmc3k_tutorial
+The count matrix were obtained after alignment to transcriptome using Cell Ranger.
 
-```{R}
+### Data format
+- Count matrix
+  - barcodes.tsv
+  - genes.tsv
+  - matrix.mtx
+
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/0ed7d89c-cda4-49d0-a91d-bae0f06f4376)
+
+- .h5 Seurat object
+
+
+
+
+```r
 # Load the PBMC dataset
 pbmc.data <- Read10X(data.dir = "~\Downloads\pbmc3k_filtered_gene_bc_matrices\filtered_gene_bc_matrices\hg19")
 
