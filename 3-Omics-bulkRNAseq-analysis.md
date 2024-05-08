@@ -22,8 +22,10 @@ Here you can find a description of the experimental design, links to the raw dat
 Once downloaded, you can read the file into R using the `read.csv()` function:
 
 ```         
-count.mat<-read.csv('/Users/pauldavidblakeley/Documents/GSE176513_gene_count_matrix.csv', header = T, sep = ',', row.names = 1)
+count.mat<-read.csv('/Users/home/GSE176513_gene_count_matrix.csv', header = T, sep = ',', row.names = 1)
 ```
+
+Please remember to change to the file path to the location of your downloaded file.
 
 We want to use the gene ids as rownames, so we use the `row.names = 1` option to use the first column as rownames.
 
@@ -37,7 +39,7 @@ To read the downloaded file into R use the following:
 
 ```         
 #read study design file
-design=read.csv('/Users/pauldavidblakeley/Documents/Novogene_meta_invitro.csv', header = TRUE, sep = ",", row.names = 1)
+design=read.csv('/Users/home/Documents/Novogene_meta_invitro.csv', header = TRUE, sep = ",", row.names = 1)
 ```
 
 ### 2.3 Using BiomaRt to convert Ensembl IDs to gene names
@@ -235,7 +237,7 @@ From looking at the top-right and top-left, you can identify the most highly dif
 First we download the list of NRF2 pathway genes from the github page and load into R
 
 ```         
-nrf_genes<-read.csv('/Users/pauldavidblakeley/Downloads/NCOMMS-21-46079B_zip-2/Source data 2_RNA-Seq Data/nrf2_pathway/nrf.txt', header = F)
+nrf_genes<-read.csv('/Users/home/Downloads/NCOMMS-21-46079B_zip-2/Source data 2_RNA-Seq Data/nrf2_pathway/nrf.txt', header = F)
 nrf_genes<-as.vector(nrf_genes$V1)
 ```
 
