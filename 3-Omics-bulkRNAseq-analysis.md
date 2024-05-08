@@ -6,7 +6,7 @@ Omics approaches generate large-scale molecular biology data, which are analyzed
 
 ### 2. Case study: RNA-seq data from an in-vitro model of proliferative vitreoretinopathy (PVR)
 
-Retinal scarring is a common complication associated with various retinal diseases, including proliferative vitreoretinopathy (PVR). A recent study (<https://www.nature.com/articles/s41467-022-30474-6>) investigated the anti-scarring effects of a thermogel polymer (PEP) on both an in-vivo and in-vitro model of PVR by performing RNA sequencing and identifying the deferentially expressed genes and pathways. In this practical session, we will use R and RStudio to analyse the processed RNA-seq data downloaded from the gene expression omnibus (GEO).
+Retinal scarring is a common complication associated with various retinal diseases, including proliferative vitreoretinopathy (PVR). A recent study (<https://www.nature.com/articles/s41467-022-30474-6>) investigated the anti-scarring effects of a thermogel polymer (PEP) on both an in-vivo and in-vitro model of PVR by performing RNA sequencing and identifying the differentially expressed genes and pathways. In this practical session, we will use R and RStudio to analyse the processed RNA-seq data downloaded from the gene expression omnibus (GEO).
 
 ### 2.1 Importing the read count matrix from GEO into R
 
@@ -33,7 +33,7 @@ We want to use the gene ids as rownames, so we use the `row.names = 1` option to
 
 The meta data information about each experimental sample can usually be extracted from GEO by using the SRA Run Selector found at the bottom of the page.
 
-However, to save time for this tutorial this file has already been downloaded and reformatted. It can be found on the github page by clicking .......
+However, to save time for this tutorial this file has already been downloaded and reformatted. The file `Novogene_meta_invitro.csv` can be found on the github page (https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024) inside the "Data" section
 
 To read the downloaded file into R use the following:
 
@@ -70,7 +70,7 @@ counts2<-count.mat[, grep("24h", colnames(count.mat))]
 design<-design[grep('24h', rownames(design)),]
 ```
 
-This tutorial will rely on DESeq2 to perform normalization and differential expression analysis. We shall use the DESeqDataSetFromMatrix from DESeq2 to create a DESeqDataSet object from a count matrix and sample metadata.
+This tutorial will rely on DESeq2 to perform normalization and differential expression analysis. We shall use the `DESeqDataSetFromMatrix()` function from DESeq2 to create a DESeqDataSet object from a count matrix and sample metadata.
 
 First install DESeq2 using BiocManager installer tool
 
