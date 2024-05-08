@@ -257,106 +257,123 @@ print(pbmc[["pca"]], dims = 1:5, nfeatures = 5)
 ```
 
 Seurat provides several useful ways of visualizing both cells and features that define the PCA, including `VizDimReduction`, `DimPlot`, `DimHeatmap`, and 
-                                                         ```r
-                                                         VizDimLoadings(pbmc, dims = 1:2, reduction = "pca")
-                                                         ```
-                                                         ![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/e4a29f22-d13f-4f92-8553-8b9a3df3fcbe)
-                                                         ```r
-                                                         DimPlot(pbmc, reduction = "pca")
-                                                         ```
-                                                         ![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/78990975-5f13-4092-b4f0-586743c6f095)
+```r
+VizDimLoadings(pbmc, dims = 1:2, reduction = "pca")
+```
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/e4a29f22-d13f-4f92-8553-8b9a3df3fcbe)
                                                          
-                                                         In particular `DimHeatmap` allows for easy exploration of the primary sources of heterogeneity in a dataset. Both cells and features are ordered according to their PCA scores. Setting cells to a number plots the ‘extreme’ cells on both ends of the spectrum, which dramatically speeds plotting for large datasets.
-                                                         ```r
-                                                         DimHeatmap(pbmc, dims = 1:15, cells = 500, balanced = TRUE)
-                                                         ```
-                                                         ![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/18761652-7cfe-4120-a728-0a28551515e5)
+```r
+DimPlot(pbmc, reduction = "pca")
+```
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/78990975-5f13-4092-b4f0-586743c6f095)
                                                          
-                                                         To determine more quantatitively the number of PCs to be used for downstream analysis, we can use `ElbowPlot` to see when the SD reaches the plateau. 
-                                                         ```r
-                                                         ElbowPlot(pbmc, ndims=30)
-                                                         ```
-                                                         When using sctransform, more PCs can be included as the sctransform workflow performs more effective normalization which removes technical effects from the data. Users are encouraged to repeat downstream analyses with a different number of PCs and see how the clustering changes.
+In particular `DimHeatmap` allows for easy exploration of the primary sources of heterogeneity in a dataset. Both cells and features are ordered according to their PCA scores. Setting cells to a number plots the ‘extreme’ cells on both ends of the spectrum, which dramatically speeds plotting for large datasets.
+
+```r
+DimHeatmap(pbmc, dims = 1:15, cells = 500, balanced = TRUE)
+```
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/18761652-7cfe-4120-a728-0a28551515e5)
                                                          
-                                                         #### 1.4.2 Perform non-linear dimensional reduction (UMAP/tSNE) and clustering
-                                                         Seurat offers several non-linear dimensional reduction techniques, such as tSNE and UMAP, to visualize and explore these datasets. 
+To determine more quantatitively the number of PCs to be used for downstream analysis, we can use `ElbowPlot` to see when the SD reaches the plateau. 
+```r
+ElbowPlot(pbmc, ndims=30)
+```
+When using sctransform, more PCs can be included as the sctransform workflow performs more effective normalization which removes technical effects from the data. Users are encouraged to repeat downstream analyses with a different number of PCs and see how the clustering changes.
                                                          
-                                                         For clustering, Seurat applies a graph-based clustering approach to construct a K-nearest neighbor (KNN) graph based on the euclidean distance in PCA space. This step is performed using the `FindNeighbors` function, and takes as input the previously defined dimensionality of the dataset (first 30 PCs). Next, `FindClusters` applies modularity optimization techniques such as the Louvain algorithm (default) or SLM to iteratively group cells together. The clusters can be found using the Idents() function.
+#### 1.4.2 Perform non-linear dimensional reduction (UMAP/tSNE) and clustering
+Seurat offers several non-linear dimensional reduction techniques, such as tSNE and UMAP, to visualize and explore these datasets. 
                                                          
-                                                         Cells that are grouped together within graph-based clusters determined below should co-localize on these dimension reduction plots.
+For clustering, Seurat applies a graph-based clustering approach to construct a K-nearest neighbor (KNN) graph based on the euclidean distance in PCA space. This step is performed using the `FindNeighbors` function, and takes as input the previously defined dimensionality of the dataset (first 30 PCs). Next, `FindClusters` applies modularity optimization techniques such as the Louvain algorithm (default) or SLM to iteratively group cells together. The clusters can be found using the Idents() function.
                                                          
-                                                         ```r
-                                                         pbmc <- RunUMAP(pbmc, dims = 1:30, verbose = FALSE)
-                                                         pbmc <- FindNeighbors(pbmc, dims = 1:30, verbose = FALSE)
-                                                         pbmc <- FindClusters(pbmc, verbose = FALSE)
-                                                         DimPlot(pbmc, label = TRUE)
-                                                         ```
-                                                         ![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/bdb53b18-619c-45d5-bae5-e3ac1b3bc5b8)
+Cells that are grouped together within graph-based clusters determined below should co-localize on these dimension reduction plots.
                                                          
-                                                         ## 6. Marker genes identification
-                                                         Seurat can help you find markers that define clusters via differential expression (DE). By default, it identifies both positive and negative markers of a single cluster (specified in ident.1), compared to all other cells.  `FindAllMarkers` automates this process for all clusters, but you can also test groups of clusters vs. each other, or against all cells.
+```r
+pbmc <- RunUMAP(pbmc, dims = 1:30, verbose = FALSE)
+pbmc <- FindNeighbors(pbmc, dims = 1:30, verbose = FALSE)
+pbmc <- FindClusters(pbmc, verbose = FALSE)   # can add resolution = 1.5 to increase the number of clusters or smaller values to reduce the number of clusters
+DimPlot(pbmc, label = TRUE)
+```
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/bdb53b18-619c-45d5-bae5-e3ac1b3bc5b8)
                                                          
-                                                         In Seurat v5, we use the presto package (as described here and available for installation here), to dramatically improve the speed of DE analysis, particularly for large datasets. For users who are not using presto, `min.pct` and `logfc.threshold` parameters can be set to increase the speed of DE testing.
+## 6. Marker genes identification
+Seurat can help you find markers that define clusters via differential expression (DE). By default, it identifies both positive and negative markers of a single cluster (specified in ident.1), compared to all other cells.  `FindAllMarkers` automates this process for all clusters, but you can also test groups of clusters vs. each other, or against all cells.
                                                          
-                                                         ```r
-                                                         # find all markers of cluster 2
-                                                         cluster2.markers <- FindMarkers(pbmc, ident.1 = 2)
-                                                         head(cluster2.markers, n = 5)
-                                                         ##               p_val avg_log2FC pct.1 pct.2     p_val_adj
-                                                         ## RPS27  5.342505e-116  0.7425496  1.00 0.998 6.688283e-112
-                                                         ## S100A4 2.224400e-101 -2.4259874  0.63 0.889  2.784726e-97
-                                                         ## RPL32  1.462416e-100  0.5981817  1.00 0.999  1.830799e-96
-                                                         ## RPS6    1.021260e-95  0.6212855  1.00 1.000  1.278515e-91
-                                                         ## RPS12   1.170400e-94  0.6631844  1.00 1.000  1.465223e-90
-                                                         ```
-                                                         ```r
-                                                         # find all markers distinguishing cluster 5 from clusters 0 and 3
-                                                         cluster5.markers <- FindMarkers(pbmc, ident.1 = 5, ident.2 = c(0, 3))
-                                                         ```
-                                                         ```r
-                                                         # find markers for every cluster compared to all remaining cells, report only the positive
-                                                         # ones
-                                                         pbmc.markers <- FindAllMarkers(pbmc, only.pos = TRUE)
-                                                         pbmc.markers %>%
-                                                           group_by(cluster) %>%
-                                                           dplyr::filter(avg_log2FC > 1)
+In Seurat v5, we use the presto package (as described here and available for installation here), to dramatically improve the speed of DE analysis, particularly for large datasets. For users who are not using presto, `min.pct` and `logfc.threshold` parameters can be set to increase the speed of DE testing.
                                                          
-                                                         ## # A tibble: 6,420 × 7
-                                                         ## # Groups:   cluster [12]
-                                                         ##       p_val avg_log2FC pct.1 pct.2 p_val_adj cluster gene   
-                                                         ##       <dbl>      <dbl> <dbl> <dbl>     <dbl> <fct>   <chr>  
-                                                         ## 1 1.50e-117       1.61 0.979 0.63  1.88e-113 0       LTB    
-                                                         ## 2 1.20e-111       1.43 0.938 0.445 1.51e-107 0       IL32   
-                                                         ## 3 3.22e- 95       1.62 0.759 0.3   4.03e- 91 0       IL7R   
-                                                         ## 4 8.71e- 79       1.10 0.895 0.416 1.09e- 74 0       CD3D   
-                                                         ## 5 1.83e- 73       2.46 0.421 0.101 2.29e- 69 0       AQP3   
-                                                         ## 6 2.69e- 72       1.05 0.929 0.593 3.37e- 68 0       LDHB   
-                                                         ## 7 1.50e- 70       3.89 0.219 0.018 1.88e- 66 0       TNFRSF4
-                                                         ## 8 7.16e- 59       1.71 0.596 0.237 8.97e- 55 0       CD2    
-                                                         ## 9 1.14e- 56       2.44 0.292 0.057 1.42e- 52 0       CD40LG 
-                                                         ## 10 1.90e- 55       1.05 0.779 0.395 2.38e- 51 0       CD3E   
-                                                         ## # ℹ 6,410 more rows
-                                                         ## # ℹ Use `print(n = ...)` to see more rows
-                                                         ```
+```r
+# find all markers of cluster 2
+cluster2.markers <- FindMarkers(pbmc, ident.1 = 2)
+head(cluster2.markers, n = 5)
+##               p_val avg_log2FC pct.1 pct.2     p_val_adj
+## RPS27  5.342505e-116  0.7425496  1.00 0.998 6.688283e-112
+## S100A4 2.224400e-101 -2.4259874  0.63 0.889  2.784726e-97
+## RPL32  1.462416e-100  0.5981817  1.00 0.999  1.830799e-96
+## RPS6    1.021260e-95  0.6212855  1.00 1.000  1.278515e-91
+## RPS12   1.170400e-94  0.6631844  1.00 1.000  1.465223e-90
+```
+```r
+# find all markers distinguishing cluster 5 from clusters 0 and 3
+cluster5.markers <- FindMarkers(pbmc, ident.1 = 5, ident.2 = c(0, 3))
+```
+```r
+# find markers for every cluster compared to all remaining cells, report only the positive
+# ones
+pbmc.markers <- FindAllMarkers(pbmc, only.pos = TRUE)
+pbmc.markers %>%
+group_by(cluster) %>%
+dplyr::filter(avg_log2FC > 1)
                                                          
-                                                         Seurat has several tests for identifying DEG which can be set with the `test.use` parameter. For example, the ROC test returns the ‘classification power’ for any individual marker (ranging from 0 - random, to 1 - perfect).
+## # A tibble: 6,420 × 7
+## # Groups:   cluster [12]
+##       p_val avg_log2FC pct.1 pct.2 p_val_adj cluster gene   
+##       <dbl>      <dbl> <dbl> <dbl>     <dbl> <fct>   <chr>  
+## 1 1.50e-117       1.61 0.979 0.63  1.88e-113 0       LTB    
+## 2 1.20e-111       1.43 0.938 0.445 1.51e-107 0       IL32   
+## 3 3.22e- 95       1.62 0.759 0.3   4.03e- 91 0       IL7R   
+## 4 8.71e- 79       1.10 0.895 0.416 1.09e- 74 0       CD3D   
+## 5 1.83e- 73       2.46 0.421 0.101 2.29e- 69 0       AQP3   
+## 6 2.69e- 72       1.05 0.929 0.593 3.37e- 68 0       LDHB   
+## 7 1.50e- 70       3.89 0.219 0.018 1.88e- 66 0       TNFRSF4
+## 8 7.16e- 59       1.71 0.596 0.237 8.97e- 55 0       CD2    
+## 9 1.14e- 56       2.44 0.292 0.057 1.42e- 52 0       CD40LG 
+## 10 1.90e- 55       1.05 0.779 0.395 2.38e- 51 0       CD3E   
+## # ℹ 6,410 more rows
+## # ℹ Use `print(n = ...)` to see more rows
+```
                                                          
-                                                         ```r
-                                                         cluster0.markers <- FindMarkers(pbmc, ident.1 = 0, logfc.threshold = 0.25, test.use = "roc", only.pos = TRUE)
-                                                         ```
+Seurat has several tests for identifying DEG which can be set with the `test.use` parameter. For example, the ROC test returns the ‘classification power’ for any individual marker (ranging from 0 - random, to 1 - perfect).
                                                          
-                                                         We include several tools for visualizing marker expression. `VlnPlot` and `FeaturePlot` are our most commonly used visualizations. 
+```r
+cluster0.markers <- FindMarkers(pbmc, ident.1 = 0, logfc.threshold = 0.25, test.use = "roc", only.pos = TRUE)
+```
                                                          
-                                                         ```r
-                                                         # Visualize canonical marker genes as violin plots
-                                                         VlnPlot(pbmc, features = c("MS4A1", "CD79A"))
-                                                         FeaturePlot(pbmc, features = c("MS4A1", "CD79A"), pt.size = 0.2, ncol = 2)
+We include several tools for visualizing marker expression. `VlnPlot` and `FeaturePlot` are our most commonly used visualizations. 
                                                          
-                                                         VlnPlot(pbmc, features = c("CD8A", "GZMK", "CCL5"), pt.size = 0.2, ncol = 3)
-                                                         # Visualize canonical marker genes on the sctransform embedding.
-                                                         FeaturePlot(pbmc, features = c("CD8A", "GZMK", "CCL5"), pt.size = 0.2, ncol = 3)
-                                                         
-                                                         ## B cell cluster - TCL1A, FCER2
-                                                         VlnPlot(pbmc, features = c("TCL1A", "FCER2"), pt.size = 0.2, ncol = 2)
-                                                         FeaturePlot(pbmc, features = c("TCL1A", "FCER2"), pt.size = 0.2, ncol = 3)
-                                                         ```
+```r
+## B cell clusters 3 - CD79A, MS4A1
+VlnPlot(pbmc, features = c("MS4A1", "CD79A"), pt.size = 0.2, ncol = 2)
+FeaturePlot(pbmc, features = c("MS4A1", "CD79A"), pt.size = 0.2, ncol = 2)
+```
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/5b143434-03ad-49a7-b684-744d7a577ac6)
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/3cc9f121-d2c7-480d-bcef-4cd3b4c5632f)
+
+```r                                                         
+## myleoid cell clusters 1 & 6 - S100A8, S100A9, CD14
+VlnPlot(pbmc, features = c("S100A8", "S100A9", "CD14"), pt.size = 0.2, ncol = 3)
+FeaturePlot(pbmc, features = c("S100A8", "S100A9", "CD14"), pt.size = 0.2, ncol = 3)
+```
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/43ca2808-c4a4-4dda-afcc-4d05533fee77)
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/3e4942c8-1a6f-4c50-89f1-be473f5d5c05)
+
+`DoHeatmap` generates an expression heatmap for given cells and features. In this case, we are plotting the top 20 markers (or all markers if less than 20) for each cluster.
+```r 
+pbmc.markers %>%
+    group_by(cluster) %>%
+    dplyr::filter(avg_log2FC > 1) %>%
+    slice_head(n = 10) %>%
+    ungroup() -> top10
+DoHeatmap(pbmc, features = top10$gene) + NoLegend()
+```
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/7e8ad874-7622-4006-9499-078c7960926c)
+
+
