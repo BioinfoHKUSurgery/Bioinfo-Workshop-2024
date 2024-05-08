@@ -53,6 +53,8 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
   install.packages("BiocManager")
 BiocManager::install("biomaRt")
 
+library(biomaRt)
+
 #use the human biomart
 human = useMart("ensembl", dataset = "hsapiens_gene_ensembl")
 
