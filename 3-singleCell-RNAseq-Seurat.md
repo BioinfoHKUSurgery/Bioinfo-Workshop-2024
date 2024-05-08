@@ -22,7 +22,7 @@ library(Seurat)
 library(ggplot2)
 
 setRepositories(ind = 1:3, addURLs = c('https://satijalab.r-universe.dev', 'https://bnprks.r-universe.dev/'))
-install.packages("glmGamPoi")
+install.packages(c("presto","glmGamPoi"))
 ```
     
 ## Dataset
@@ -201,9 +201,12 @@ pbmc
 ### 1.3 Normalization and scaling (Replace with SCTransform)
 After removing unwanted cells from the dataset, the next step is to normalize the data. 
 
-Standard workflow runs `NormalizeData`, `FindVariableFeatures`, and `ScaleData` that normalizes the feature expression measurements for each cell by the total expression, multiplies this by a scale factor (10,000 by default), and log-transforms the result. 
+Standard workflow runs `NormalizeData`, `ScaleData`, and `FindVariableFeatures`:
+- `NormalizeData` : normalizes the feature expression measurements for each cell by the total expression, multiplies this by a scale factor (10,000 by default), and log-transforms the result
+- `ScaleData`: applies a linear transformation (‘scaling’) prior to dimensional reduction techniques like principal component analysis (PCA), e.g. standardization to mean of 0 and variance of 1 across cells
+- `FindVariableFeatures`: calculates highly variable genes and focuses on these for downstream analysis to highlight biological signal in single-cell datasets. Highly variable genes are those genes that exhibit high cell-to-cell variation in the dataset (i.e, highly expressed in some cells but lowly expressed in others). 
 
-A newer modeling framework for normalization and variance stabilization, called 'SCTransform`, was proposed to improve common downstream analytical tasks such as variable gene selection, dimensional reduction, and differential expression. 
+A newer modeling framework for normalization and variance stabilization, called 'SCTransform`, replaces `NormalizeData`, `ScaleData`, and `FindVariableFeatures` and is proposed to improve common downstream analytical tasks such as variable gene selection, dimensional reduction, and differential expression. 
 
 After running `SCTransform`, transformed data will be available in the `SCT` assay. During normalization, we can also remove confounding sources of variation, for example, mitochondrial mapping percentage,
 
@@ -216,27 +219,133 @@ pbmc
 ```
 
 `pbmc[["SCT"]]$scale.data`: contains the residuals (normalized values), and is used directly as input to PCA. Please note that this matrix is non-sparse, and can therefore take up a lot of memory if stored for all genes. To save memory, we store these values only for highly variable genes (3,000 by default), by setting the return.only.var.genes = TRUE by default in the SCTransform() function call.
-`pbmc[["SCT"]]$counts`: stores ‘corrected’ UMI counts. To assist with visualization and interpretation, we also convert Pearson residuals back to ‘corrected’ UMI counts. You can interpret these as the UMI counts we would expect to observe if all cells were sequenced to the same depth. 
+
 
 ### 1.4 Dimension reduction and visualization
-When using sctransform, more PCs can be included as the sctransform workflow performs more effective normalization which removes technical effects from the data.
+#### 1.4.1 Perform linear dimensional reduction
+Identifying the true dimensionality of a dataset – can be challenging. It is recommended to use multiple approaches. The first is more supervised, exploring principal components (PCs) to determine relevant sources of heterogeneity. 
+
+So we first perform linear dimensional reduction--PCA--on the scaled data. By default, only the previously determined variable features (3,000 for `SCTransform`) are used as input. 
 
 ```r
 # These are now standard steps in the Seurat workflow for visualization and clustering
-pbmc <- RunPCA(pbmc, verbose = FALSE)
-pbmc <- RunUMAP(pbmc, dims = 1:30, verbose = FALSE)
+pbmc <- RunPCA(pbmc, verbose = FALSE)   # pbmc <- RunPCA(pbmc, features = VariableFeatures(object = pbmc))
+```
+```r
+# Examine and visualize PCA results a few different ways
+print(pbmc[["pca"]], dims = 1:5, nfeatures = 5)
+## PC_ 1 
+## Positive:  FTL, LYZ, FTH1, CST3, S100A9 
+## Negative:  MALAT1, RPS27A, CCL5, RPS6, LTB 
+## PC_ 2 
+## Positive:  NKG7, CCL5, GZMB, GNLY, GZMA 
+## Negative:  HLA-DRA, CD74, CD79A, HLA-DPB1, HLA-DQA1 
+## PC_ 3 
+## Positive:  S100A8, S100A9, LYZ, FTL, RPS12 
+## Negative:  CD74, HLA-DRA, CD79A, HLA-DPB1, HLA-DQA1 
+## PC_ 4 
+## Positive:  FCGR3A, LST1, FCER1G, AIF1, IFITM3 
+## Negative:  S100A8, S100A9, LYZ, LGALS2, CD14 
+## PC_ 5 
+## Positive:  GNLY, GZMB, FGFBP2, FCGR3A, PRF1 
+## Negative:  CCL5, GPX1, PPBP, PF4, SDPR 
+```
+Seurat provides several useful ways of visualizing both cells and features that define the PCA, including `VizDimReduction`, `DimPlot`, `DimHeatmap`, and 
+```r
+VizDimLoadings(pbmc, dims = 1:2, reduction = "pca")
+```
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/e4a29f22-d13f-4f92-8553-8b9a3df3fcbe)
+```r
+DimPlot(pbmc, reduction = "pca")
+```
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/78990975-5f13-4092-b4f0-586743c6f095)
 
+In particular `DimHeatmap` allows for easy exploration of the primary sources of heterogeneity in a dataset. Both cells and features are ordered according to their PCA scores. Setting cells to a number plots the ‘extreme’ cells on both ends of the spectrum, which dramatically speeds plotting for large datasets.
+```r
+DimHeatmap(pbmc, dims = 1:15, cells = 500, balanced = TRUE)
+```
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/18761652-7cfe-4120-a728-0a28551515e5)
+
+To determine more quantatitively the number of PCs to be used for downstream analysis, we can use `ElbowPlot` to see when the SD reaches the plateau. 
+```r
+ElbowPlot(pbmc, ndims=30)
+```
+When using sctransform, more PCs can be included as the sctransform workflow performs more effective normalization which removes technical effects from the data. Users are encouraged to repeat downstream analyses with a different number of PCs and see how the clustering changes.
+
+#### 1.4.2 Perform non-linear dimensional reduction (UMAP/tSNE) and clustering
+Seurat offers several non-linear dimensional reduction techniques, such as tSNE and UMAP, to visualize and explore these datasets. 
+
+For clustering, Seurat applies a graph-based clustering approach to construct a K-nearest neighbor (KNN) graph based on the euclidean distance in PCA space. This step is performed using the `FindNeighbors` function, and takes as input the previously defined dimensionality of the dataset (first 30 PCs). Next, `FindClusters` applies modularity optimization techniques such as the Louvain algorithm (default) or SLM to iteratively group cells together. The clusters can be found using the Idents() function.
+
+Cells that are grouped together within graph-based clusters determined below should co-localize on these dimension reduction plots.
+
+```r
+pbmc <- RunUMAP(pbmc, dims = 1:30, verbose = FALSE)
 pbmc <- FindNeighbors(pbmc, dims = 1:30, verbose = FALSE)
 pbmc <- FindClusters(pbmc, verbose = FALSE)
 DimPlot(pbmc, label = TRUE)
 ```
-## 5. Clustering
-## 6. Marker genes identification
-These are now standard steps in the Seurat workflow for visualization and clustering
-```r
-# These are now standard steps in the Seurat workflow for visualization and clustering
-## CD8 T cell populations (naive, memory, effector) - CD8A, GZMK, CCL5
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/bdb53b18-619c-45d5-bae5-e3ac1b3bc5b8)
 
+## 6. Marker genes identification
+Seurat can help you find markers that define clusters via differential expression (DE). By default, it identifies both positive and negative markers of a single cluster (specified in ident.1), compared to all other cells.  `FindAllMarkers` automates this process for all clusters, but you can also test groups of clusters vs. each other, or against all cells.
+
+In Seurat v5, we use the presto package (as described here and available for installation here), to dramatically improve the speed of DE analysis, particularly for large datasets. For users who are not using presto, `min.pct` and `logfc.threshold` parameters can be set to increase the speed of DE testing.
+
+```r
+# find all markers of cluster 2
+cluster2.markers <- FindMarkers(pbmc, ident.1 = 2)
+head(cluster2.markers, n = 5)
+##               p_val avg_log2FC pct.1 pct.2     p_val_adj
+## RPS27  5.342505e-116  0.7425496  1.00 0.998 6.688283e-112
+## S100A4 2.224400e-101 -2.4259874  0.63 0.889  2.784726e-97
+## RPL32  1.462416e-100  0.5981817  1.00 0.999  1.830799e-96
+## RPS6    1.021260e-95  0.6212855  1.00 1.000  1.278515e-91
+## RPS12   1.170400e-94  0.6631844  1.00 1.000  1.465223e-90
+```
+```r
+# find all markers distinguishing cluster 5 from clusters 0 and 3
+cluster5.markers <- FindMarkers(pbmc, ident.1 = 5, ident.2 = c(0, 3))
+```
+```r
+# find markers for every cluster compared to all remaining cells, report only the positive
+# ones
+pbmc.markers <- FindAllMarkers(pbmc, only.pos = TRUE)
+pbmc.markers %>%
+    group_by(cluster) %>%
+    dplyr::filter(avg_log2FC > 1)
+
+## # A tibble: 6,420 × 7
+## # Groups:   cluster [12]
+##       p_val avg_log2FC pct.1 pct.2 p_val_adj cluster gene   
+##       <dbl>      <dbl> <dbl> <dbl>     <dbl> <fct>   <chr>  
+## 1 1.50e-117       1.61 0.979 0.63  1.88e-113 0       LTB    
+## 2 1.20e-111       1.43 0.938 0.445 1.51e-107 0       IL32   
+## 3 3.22e- 95       1.62 0.759 0.3   4.03e- 91 0       IL7R   
+## 4 8.71e- 79       1.10 0.895 0.416 1.09e- 74 0       CD3D   
+## 5 1.83e- 73       2.46 0.421 0.101 2.29e- 69 0       AQP3   
+## 6 2.69e- 72       1.05 0.929 0.593 3.37e- 68 0       LDHB   
+## 7 1.50e- 70       3.89 0.219 0.018 1.88e- 66 0       TNFRSF4
+## 8 7.16e- 59       1.71 0.596 0.237 8.97e- 55 0       CD2    
+## 9 1.14e- 56       2.44 0.292 0.057 1.42e- 52 0       CD40LG 
+## 10 1.90e- 55       1.05 0.779 0.395 2.38e- 51 0       CD3E   
+## # ℹ 6,410 more rows
+## # ℹ Use `print(n = ...)` to see more rows
+```
+
+Seurat has several tests for identifying DEG which can be set with the `test.use` parameter. For example, the ROC test returns the ‘classification power’ for any individual marker (ranging from 0 - random, to 1 - perfect).
+
+```r
+cluster0.markers <- FindMarkers(pbmc, ident.1 = 0, logfc.threshold = 0.25, test.use = "roc", only.pos = TRUE)
+```
+
+We include several tools for visualizing marker expression. VlnPlot() (shows expression probability distributions across clusters), and FeaturePlot() (visualizes feature expression on a tSNE or PCA plot) are our most commonly used visualizations. We also suggest exploring RidgePlot(), CellScatter(), and DotPlot() as additional methods to view your dataset.
+
+VlnPlot(pbmc, features = c("MS4A1", "CD79A"))
+
+These are now standard steps in the Seurat workflow for visualization and clustering
+
+```r
 # Visualize canonical marker genes as violin plots.
 VlnPlot(pbmc, features = c("CD8A", "GZMK", "CCL5"), pt.size = 0.2, ncol = 3)
 # Visualize canonical marker genes on the sctransform embedding.
@@ -247,4 +356,3 @@ VlnPlot(pbmc, features = c("TCL1A", "FCER2"), pt.size = 0.2, ncol = 2)
 FeaturePlot(pbmc, features = c("TCL1A", "FCER2"), pt.size = 0.2, ncol = 3)
 ```
 
-## 7. Integration
