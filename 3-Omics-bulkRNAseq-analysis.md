@@ -82,7 +82,7 @@ if (!require("BiocManager", quietly = TRUE))
 
 BiocManager::install("DESeq2")
 
-library("DESeq2"")
+library("DESeq2")
 ```
 
 Then run DESeqDataSetFromMatrix and remove genes with fewer than 2 read counts for increased efficiency and faster run time,
