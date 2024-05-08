@@ -1,6 +1,6 @@
 ### “Omics Data Analysis”
 
-### 1. Introduction to Omics data
+### 1. Introduction to Omics and RNA-seq data
 
 Omics approaches generate large-scale molecular biology data, which are analyzed using bioinformatics tools and computational approaches to extract meaningful biological information. Omics has broad applications in various fields, including basic research, clinical diagnostics, drug discovery, and personalized medicine. It encompasses various disciplines, including genomics, transcriptomics, proteomics, metabolomics, and epigenomics. In this session, we will focus on transcriptomics and how bioinformatics approaches can be used to analyse and interpret RNA sequencing data.
 
@@ -8,13 +8,16 @@ Omics approaches generate large-scale molecular biology data, which are analyzed
 
 Retinal scarring is a common complication associated with various retinal diseases, including proliferative vitreoretinopathy (PVR). A recent study (<https://www.nature.com/articles/s41467-022-30474-6>) investigated the anti-scarring effects of a thermogel polymer (PEP) on both an in-vivo and in-vitro model of PVR by performing RNA sequencing and identifying the deferentially expressed genes and pathways. In this practical session, we will use R and RStudio to analyse the processed RNA-seq data downloaded from the gene expression omnibus (GEO).
 
-### 2.1 Importing the read count matrix
+### 2.1 Importing the read count matrix from GEO into R
+
+GEO (Gene Expression Omnibus) is a public repository maintained by the National Center for Biotechnology Information (NCBI). It serves as a resource for storing and sharing high-throughput gene expression data including RNA-seq data, as well as other types of genomic data. The RNA-seq data for this case study is available on GEO under the accesion GSE176513.
 
 Open the web link to the dataset on GEO: <https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE176513>
 
-Here you can find a description of the experimental design, links to the raw data, and processed data which in this case is a read count matrix called GSE176513_gene_count_matrix.csv.gz. To find this, scroll down to the bottom and under "supplementary file" click download (ftp).
+Here you can find a description of the experimental design, links to the raw data, and processed data which in this case is a read count matrix called "GSE176513_gene_count_matrix.csv.gz". To find this, scroll down to the bottom and under "supplementary file" click download (ftp).
 
-![](images/clipboard-2351814831.png)
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165875740/c0057e40-4585-47d9-b6bf-eeb9e1b4b55b)
+
 
 Once downloaded, you can read the file into R using the `read.csv()` function:
 
@@ -100,7 +103,7 @@ vst.mat2<-t(vst.mat)
 
 ### 2.4 Sample correlation heatmap and PCA
 
-Before we proceed with differential expression significance testing provided by DESeq2, we would first like to check the samples for any outliers, check the within- and between- group variances, and to see if the PEP treatment is having an effect on the gene expression. We will use the VST normalized values perform cl
+Before we proceed with differential expression significance testing provided by DESeq2, we would first like to check the samples for any outliers, check the within- and between- group variances, and to see if the PEP treatment is having an effect on the gene expression. We will use the VST normalized values perform clustering and dimension reduction.
 
 First calculate euclidean distance between samples. Other distance metrics such as Pearson correlation may also be used instead.
 
@@ -128,9 +131,11 @@ pheatmap(sampleDistMatrix,
          col=colors)
 ```
 
-This could produce the following heatmap including dendrogram:
+This will produce the following heatmap including dendrogram.
 
-![](images/clipboard-1522008039.png)
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165875740/5c6bd595-5a57-40f4-83e3-82ae26a6ae3c)
+
+The heatmap shows that  TNT (TNFa + TGFb) which induces the PVR model has the biggest effect on gene expression, followed secondly by treatment with the thermogel polymer poly(PEP). This is confirmed by the PCA plot in below.
 
 DESeq2 has a `plotPCA()` function which we use to generate a PCA based on the top 8000 most variable genes.
 
@@ -144,7 +149,9 @@ ggplot(data, aes(PC1, PC2,label=design.Treatment,color=design.Treatment), size=1
   ylab(paste0("PC2: ",percentVar[2],"% variance"))
 ```
 
-![](images/clipboard-2982271965.png)
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165875740/4f6b2b5d-220b-4946-abe4-98546e3ca1ef)
+
+The PCA shows that there are no outliers and the within-group variance relatively low, idicating that differential expression analysis between poly(PEP) and control is faesible.
 
 ### 2.5 DE testing
 
@@ -184,7 +191,7 @@ res.CD<-merge(as.data.frame(res.CD), base.means, by.x='row.names', by.y='row.nam
 res.CD<-merge(as.data.frame(res.CD), t2g, by.x='Row.names', by.y='ensembl_gene_id')
 ```
 
-Finally to write the DESeq2 results to a CSV file we can use:
+Finally to write the DESeq2 results to a CSV file we can use the following code and then view the file on Excel.
 
 ```         
 #write deseq results
@@ -220,7 +227,8 @@ ggplot(data = res.CD, aes(y=minl2pval, x=log2FoldChange, col=col)) +
   theme(text = element_text(size=5)) + theme_minimal()
 ```
 
-![](images/clipboard-2010409566.png)
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165875740/38038b6c-c3bb-46c2-bcb2-a83be1586e93)
+
 
 From looking at the top-right and top-left, you can identify the most highly differential expressed genes. We observe that some genes such as `GSR, ME1, SLC6A6` are components of the NRF2 signalling pathway, which id a critical cellular defense mechanism against oxidative stress. We want to see whether the NRF2 pathway is indeed upregulated after poly(PEP) treatment, so we generate a volcano plot highlighting all members of this signalling pathway.
 
@@ -245,4 +253,6 @@ ggplot(data = res.CD, aes(y=minl2pval, x=log2FoldChange, col=col)) +
   theme(text = element_text(size=20)) + geom_hline(yintercept = 1.30103, linetype="dashed")+ theme_minimal()
 ```
 
-![](images/clipboard-21520051.png)
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165875740/7a0539ef-81bf-48dd-9c1b-555a9b59cd63)
+
+From this we can see that most NRF2 pathway genes are significantly upregulated in poly(PEP) and have much larger fold changes compared to the background genes.
