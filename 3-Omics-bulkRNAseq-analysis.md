@@ -239,7 +239,7 @@ From looking at the top-right and top-left, you can identify the most highly dif
 First we download the list of NRF2 pathway genes from the github page and load into R
 
 ```         
-nrf_genes<-read.csv('/Users/home/Downloads/NCOMMS-21-46079B_zip-2/Source data 2_RNA-Seq Data/nrf2_pathway/nrf.txt', header = F)
+nrf_genes<-read.csv('/Users/home/nrf2.txt', header = F)
 nrf_genes<-as.vector(nrf_genes$V1)
 ```
 
@@ -260,3 +260,11 @@ ggplot(data = res.CD, aes(y=minl2pval, x=log2FoldChange, col=col)) +
 ![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165875740/7a0539ef-81bf-48dd-9c1b-555a9b59cd63)
 
 From this we can see that most NRF2 pathway genes are significantly upregulated in poly(PEP) and have much larger fold changes compared to the background genes.
+
+
+### 3 Exercises
+
+3.1 Could you replot the final volcano plot but make both the points smaller and the point labels smaller.
+
+3.2 Could you perform DE and generate volcano plots for `Untreated_24hr` vs `Polymer_24hr` ESC-RPEs (instead of TNT_24hr vs PolymerTNT_24hr)
+
