@@ -376,4 +376,9 @@ DoHeatmap(pbmc, features = top10$gene) + NoLegend()
 ```
 ![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/7e8ad874-7622-4006-9499-078c7960926c)
 
-
+We can also use `DotPlot` to visualize the percentage of expression as a second dimension for known markers
+```r
+markers.to.plot <- c("S100A8", "S100A9", "CD14",  "MS4A1", "CD79A", "GNLY", "NKG7", "CCL5", "CD8A", "GIMAP5", "CD3D") 
+DotPlot(pbmc, features = markers.to.plot, cols = c("blue", "red"), dot.scale = 8) +RotatedAxis()
+```
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165180561/b536e6d4-0e3a-45c9-a8d3-6a15f216f36c)
