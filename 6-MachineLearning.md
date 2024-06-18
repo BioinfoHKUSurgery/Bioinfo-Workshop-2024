@@ -31,11 +31,27 @@ To confirm the correct dataframe was extracted, the dimensions are checked. The 
 
 ```
 data(srbct) # extract the small round bull cell tumour data
+
 X <- srbct$gene # use the gene expression data as the X matrix
 Y <- srbct$class # use the class data as the Y matrix
-
+```
+```
 dim(X) # check the dimensions of the X dataframe
 ```
+```
+## [1]   63 2308
+```
+
+```
+summary(Y) # check the distribution of class labels
+```
+```
+## EWS  BL  NB RMS 
+##  23   8  12  20
+```
+
+
+
 
 As in most cases when generating models, exploring the data to determine the major sources of variation is a good first step. PCA is be used for this and centering and scaling is recommended to homogenize the variance across the genes. ncomp is set to an arbitrarily high number to understand the captured variance across cotheremponents.
 
