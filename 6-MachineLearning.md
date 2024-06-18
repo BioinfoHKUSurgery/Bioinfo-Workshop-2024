@@ -6,7 +6,7 @@ Sparse Partial Least Squares Discriminant Analysis (sPLS-DA) is a machine learni
 
 In sPLS-DA, the input data matrix is decomposed into a small number of latent variables (linear combinations of the original variables) which maximally seperate the data classes when used in the classification model.
 
-### Instalation
+### Installation
 
 First lets install the mixOmics R package using BiocManager and the load the package.
 
