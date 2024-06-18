@@ -59,8 +59,10 @@ As in most cases when generating models, exploring the data to determine the maj
 # run pca method on data
 pca.srbct = pca(X, ncomp = 10, center = TRUE, scale = TRUE) 
 plot(pca.srbct)  # barplot of the eigenvalues (explained variance per component)
-![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165875740/85c6100b-eb00-4cce-8acc-46b06b847aff)
+```
 
+```
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165875740/85c6100b-eb00-4cce-8acc-46b06b847aff)
 ```
 
 This barchart shows 2 components would be sufficient to explain a moderate proportion of the data's variance . Next, the data is projected onto these two components to attempt to observe sources of variation.
