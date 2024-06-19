@@ -1,4 +1,4 @@
-# 6-Machine learning practical session
+# 6-Machine Learning: practical session
 
 ## Sparse Partial Least Squares Regression Discriminant Analysis (sPLS-DA)
 
@@ -252,6 +252,9 @@ cim <- cim(final.splsda, row.sideColors = color.mixo(Y),
            legend = legend)
 ```
 
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165875740/fcd47914-d6cd-4b21-8bd0-f01e93904ea4)
+
+
 ### Feature importance plots
 
 The stability of a given feature, or gene in this case, is defined as the proportion of cross validation folds (across repeats) where it was selected for to be used for a given component. Stability values can be extracted via perf.splsda.srbct$features$stable and ploted (see below). Those with the highest stability are likely to be much more “important” for a given component. The genes used for the first component had consistently lower stability than the other two. This can be explained as there are various combinations of genes that are discriminative on component 1, whereas the number of combinations decreases as component 2 is formed.
@@ -280,16 +283,22 @@ plot(perf.splsda.srbct$features$stable[[3]], type = 'h',
      
 ```
 
-Another feature plot to be used is the correlation circle plot shown below. By considering both the correlation circle plot and the sample plot, a group of genes with a positive correlation with component 1 (EH domain, proteasome etc.) are observed to be associated with the BL samples. Two groups of genes are either positively or negatively correlated with component 2. These genes are likely to characterize either the NB and RMS tumor classes, or the EWS tumor class respectively.
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165875740/40895759-c087-4fbb-9034-4ba1e58e34f7)
+
+
+Another type of feature plot is the correlation circle plot shown below. By considering both the correlation circle plot and the sample plot, a group of genes with a positive correlation with component 1 (EH domain, proteasome etc.) are observed to be associated with the BL samples. Two groups of genes are either positively or negatively correlated with component 2. These genes are likely to characterize either the NB and RMS tumor classes, or the EWS tumor class respectively.
 
 ```
 var.name.short <- substr(srbct$gene.name[, 2], 1, 40) # form simplified gene names truncated to 40 charachters
 
-plotVar(final.splsda, comp = c(1,2), var.names = list(var.name.short), cex = 2.5) # generate correlation circle plot
+plotVar(final.splsda, comp = c(1,2), var.names = list(var.name.short), cex = 1.8) # generate correlation circle plot
 
 ```
 
-Even though we truncated the gene names, some are still dificult to visualize with 2 components. We can use instead use 3 components and make an interactive 3D plot using the ```rgl``` package which allows us to rotate and zoom to better visualize the genes
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165875740/47cf3037-cb21-4082-bbca-e3e99232754a)
+
+
+Even though we truncated the gene names, some are still dificult to visualize with 2 components. We can use instead use 3 components and make an interactive 3D plot using the ```rgl``` package which allows us to rotate and zoom to better visualize the genes. This is also useful when there are three componnents that are important for classification.
 
 ```
 install.packages("rgl")
