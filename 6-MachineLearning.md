@@ -400,7 +400,7 @@ auc.splsda = auroc(final.splsda, roc.comp = 3, print = FALSE) # AUROC for all th
 
 Using the ```plotVar``` function and ```rgl``` package, can you identify the 8 genes with high positive correlation with NB and RMS tumors (component 2)?
 
-Is there any way you can make an improved model with a higher AUC by tuning the parameters in a different way ? 
+Is there any way you can make an improved model for individual components 1 and 2 with a higher AUC by tuning the parameters in a different way ? Does this improved model identify more tumour specific genes in the heatmap?
 
 *(hint: in the help tab of R Studio type ```tune.splsda``` to find a list of parameter  that can be modified )*
 
