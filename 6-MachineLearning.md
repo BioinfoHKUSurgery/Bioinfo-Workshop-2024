@@ -396,7 +396,7 @@ auc.splsda = auroc(final.splsda, roc.comp = 3, print = FALSE) # AUROC for all th
 ```
 ![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165875740/e286b444-df77-4056-b444-39ae02d8afe4)
 
-## Tasks
+## Exercises
 
 Using the ```plotVar``` function and ```rgl``` package, can you identify the 8 genes with high positive correlation with NB and RMS tumors (component 2)?
 
