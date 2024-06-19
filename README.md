@@ -12,7 +12,7 @@
 3. Basic omics data analysis (1)  - bulk RNA sequencing ([Online tutorials](3-Omics-bulkRNAseq-analysis.md))
 4. Basic omics data analysis (2) - single cell RNA sequencing ([Online tutorials](4-singleCell-RNAseq-Seurat.md))
 5. Public bioinformatics resources for genomic analysis interpretation 
-6. Machine learning
+6. Machine learning ([Online tutorials](6-MachineLearning.md))
 7. Bridging the research findings to clinical application
 
 ## Software needed
