@@ -155,9 +155,6 @@ perf.splsda.srbct$choice.ncomp # what is the optimal value of components accordi
 
 In order to determine the number of variables used to construct each latent component, the tune.splsda() function is utilised. This is performed iteratively, such that components are tuned one at a time. Through this function, the classification error rate can be extracted and averaged across folds and repeats. For larger datasets, an appropriate number of repeats would be around 50-100.
 
-
-The output of the tuning is shown below. The diamond indicates the optimal number of variables to keep for a given component, selected by which keepX value achieves the lowest classification error rate as determined with a one-sided t−test. The error bars indicate the standard deviation across the repeated, cross-validated folds.
-
 ```
 # grid of possible keepX values that will be tested for each component
 list.keepX <- c(1:10,  seq(20, 300, 10))
@@ -170,9 +167,15 @@ tune.splsda.srbct <- tune.splsda(X, Y, ncomp = 4, # calculate for first 4 compon
                                  measure = "BER", # use balanced error rate of dist measure
                                  test.keepX = list.keepX,
                                  cpus = 2) # allow for paralleliation to decrease runtime
+```
 
+Note: If this step is taking too long on your laptop, please download the pretrained model ```tune.splsda.srbct.RDS``` which is avaialable in Data folder.
+This can be loaded intoo R using ```tune.splsda.srbct<-readRDS('tune.splsda.RDS')```
+
+The output of the tuning is shown below. The diamond indicates the optimal number of variables to keep for a given component, selected by which keepX value achieves the lowest classification error rate as determined with a one-sided t−test. The error bars indicate the standard deviation across the repeated, cross-validated folds.
+
+```
 plot(tune.splsda.srbct, col = color.jet(4)) # plot output of variable number tuning
-
 ```
 
 ![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165875740/74516724-9cb3-4a5a-8d30-292df8f37e3d)
