@@ -55,8 +55,6 @@ summary(Y) # check the distribution of class labels
 ```
 
 
-
-
 As in most cases when generating models, exploring the data to determine the major sources of variation is a good first step. PCA is be used for this and centering and scaling is recommended to homogenize the variance across the genes. ncomp is set to an arbitrarily high number to understand the captured variance across cotheremponents.
 
 ```
@@ -403,5 +401,10 @@ Using the ```plotVar``` function and ```rgl``` package, can you identify the 8 g
 Is there any way you can make an improved model for individual components 1 and 2 with a higher AUC by tuning the parameters in a different way ? Does this improved model identify more tumour specific genes in the heatmap?
 
 *(hint: in the help tab of R Studio type ```tune.splsda``` to find a list of parameter  that can be modified )*
+
+### Data sources for this tutorial
+
+SRBCT data: Khan et al. 2001 Nature medicine. 2001;7(6):673–679. pmid:11385503
+mixOmics: Rohart et al. 2017 https://doi.org/10.1371/journal.pcbi.1005752
 
 
