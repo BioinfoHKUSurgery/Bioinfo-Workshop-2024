@@ -153,7 +153,7 @@ perf.splsda.srbct$choice.ncomp # what is the optimal value of components accordi
 
 ### The keepX Parameter
 
-In order to determine the number of variables used to construct each latent component, the tune.splsda() function is utilised. This is performed iteratively, such that components are tuned one at a time. Through this function, the classification error rate can be extracted and averaged across folds and repeats. As mentioned above, an appropriate number of repeats would be around 50-100.
+In order to determine the number of variables used to construct each latent component, the tune.splsda() function is utilised. This is performed iteratively, such that components are tuned one at a time. Through this function, the classification error rate can be extracted and averaged across folds and repeats. For larger datasets, an appropriate number of repeats would be around 50-100.
 
 
 The output of the tuning is shown below. The diamond indicates the optimal number of variables to keep for a given component, selected by which keepX value achieves the lowest classification error rate as determined with a one-sided t−test. The error bars indicate the standard deviation across the repeated, cross-validated folds.
@@ -174,6 +174,9 @@ tune.splsda.srbct <- tune.splsda(X, Y, ncomp = 4, # calculate for first 4 compon
 plot(tune.splsda.srbct, col = color.jet(4)) # plot output of variable number tuning
 
 ```
+
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165875740/74516724-9cb3-4a5a-8d30-292df8f37e3d)
+
 
 This also aids in further tuning the number of components. While the tuning of component number (through perf()) yielded an optimal value of 4, conflicting results can be seen after the use of tune.splsda(), such that the optimal value is claimed to be 3. After the optmisation of the selected features, the fourth component seemingly minimises the BER negligibly, and so 3 components are used in the final model.
 
@@ -219,6 +222,8 @@ plotIndiv(final.splsda, comp = c(1,2), # plot samples from final model
           ellipse = TRUE, legend = TRUE, # include 95% confidence ellipse
           title = ' (a) sPLS-DA on SRBCT, comp 1 & 2')
 ```
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165875740/8eb0dee0-8bac-48ee-80dc-f30b4a33759c)
+
 
 (b) first and third components
 ```
@@ -227,6 +232,8 @@ plotIndiv(final.splsda, comp = c(1,3), # plot samples from final model
           ellipse = TRUE, legend = TRUE, # include 95% confidence ellipse
           title = '(b) sPLS-DA on SRBCT, comp 1 & 3')
 ```
+![image](https://github.com/BioinfoHKUSurgery/Bioinfo-Workshop-2024/assets/165875740/6e209324-9ea4-4e1d-9904-0d3bcdc5f548)
+
 
 We then generate a heatmap to depict the expression levels of each gene (selected for component construction) for every sample. Euclidean distance with a complete agglomeration method were used to yield this heatmap. It can be seen that certain sets of genes selected by the sPLS-DA had homogeneous expression for different classes. For example, nearly half of the genes had high expression with the EWS (blue) tumour.
 
