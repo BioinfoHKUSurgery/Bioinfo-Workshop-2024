@@ -405,6 +405,7 @@ Is there any way you can make an improved model for individual components 1 and 
 ### Data sources for this tutorial
 
 SRBCT data: Khan et al. 2001 Nature medicine. 2001;7(6):673–679. pmid:11385503
+
 mixOmics: Rohart et al. 2017 https://doi.org/10.1371/journal.pcbi.1005752
 
 
