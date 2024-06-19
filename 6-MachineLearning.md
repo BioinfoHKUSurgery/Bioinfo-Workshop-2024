@@ -191,8 +191,8 @@ tune.splsda.srbct$choice.ncomp$ncomp # what is the optimal value of components a
 The exact quantity of features to use for each component can also be extracted from this object:
 ```
 tune.splsda.srbct$choice.keepX # what are the optimal values of variables according to tune.splsda()
-## comp1 comp2 comp3 comp4 
-##     9   260    30    10
+##comp1 comp2 comp3 comp4 
+##   8   300    50     9 
 ```
 
 These values are stored to form the final, optimised model.
