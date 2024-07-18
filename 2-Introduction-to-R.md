@@ -1,4 +1,4 @@
-### “Introduction to R: data manipulation and visualization”
+## Introduction to R: data manipulation and visualization
 
 ### 1. Data manipulation and control structures
 
