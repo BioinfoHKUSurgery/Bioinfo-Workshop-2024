@@ -1,4 +1,4 @@
-### “Omics Data Analysis”
+## Omics Data Analysis
 
 ### 1. Introduction to Omics and RNA-seq data
 
